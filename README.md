@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cargoworks
 
-## Getting Started
+> Modern logistics and supply chain management platform connecting global trade routes across India, UAE, the Middle East, Asia, and worldwide.
 
-First, run the development server:
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+
+---
+
+## 📦 Overview
+
+**Cargoworks** is a high-performance, modern digital presence and cargo management interface for freight forwarding, multi-modal transport planning, customs brokerage, and smart warehousing.
+
+### Key Capabilities
+- **Multi-Modal Freight Solutions**: Ocean Freight (FCL/LTL), Express Air Freight, and Road Logistics.
+- **Supply Chain Infrastructure**: Smart Warehousing, 3PL Fulfillment, and Cold-Chain Operations.
+- **Customs & Trade Compliance**: Seamless port clearance, tariff advisory, and automated documentation.
+- **Interactive Shipment Estimator & Inquiries**: Instant quote preparation and structured customer intake.
+- **Interactive Logistics Map & Dynamic Showcase**: Clean visual representations of trade routes and coverage.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (App Router, Turbopack)
+- **UI Library**: [React 19](https://react.dev/)
+- **Styling**: Vanilla CSS custom design system + [Tailwind CSS v4](https://tailwindcss.com/)
+- **Typography**: Google Fonts via `next/font` (`Oswald`, `Inter`, `JetBrains Mono`)
+- **Motion & Smooth Scroll**: Lenis & Framer Motion
+- **SEO & Metadata**: Next.js 14+ Metadata API, dynamic sitemap, and robots.txt
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18.18+ or 20+
+- npm or yarn or pnpm
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Thanzeel-N/cargoworks.git
+   cd cargoworks
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🏗️ Production Build
+
+To build the application for production:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+To start the production server locally:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🚢 Deployment
 
-To learn more about Next.js, take a look at the following resources:
+This project is optimized for deployment on [Vercel](https://vercel.com/) or any modern Node.js hosting platform with zero configuration.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📄 License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Proprietary © 2026 Cargoworks. All rights reserved.
