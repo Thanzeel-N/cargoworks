@@ -452,7 +452,7 @@ section {
 .hero__bg-image {
   position: absolute;
   inset: 0;
-  background-image: url('/images/hero_bg.jpg');
+  background-image: url('/images/hero_bg.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -2337,7 +2337,7 @@ button:focus-visible {
   min-height: 580px;
   overflow: hidden;
   isolation: isolate;
-  background: linear-gradient(180deg, rgba(31, 41, 40, 0.08), rgba(31, 41, 40, 0.65)), url('/images/hero_bg.jpg') 35% center / cover;
+  background: linear-gradient(180deg, rgba(31, 41, 40, 0.08), rgba(31, 41, 40, 0.65)), url('/images/hero_bg.webp') 35% center / cover;
 }
 
 .about__visual::before {
