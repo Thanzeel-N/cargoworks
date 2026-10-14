@@ -3948,80 +3948,6 @@ button:focus-visible {
    CINEMATIC EXPERIENCE LAYER
    Loader, interactive hero depth, sticky service story, cargo orbit.
 ================================================================ */
-.experience-loader {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  color: #1f2928;
-  isolation: isolate;
-}
-
-.experience-loader__panel {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-}
-
-.experience-loader__panel--light {
-  background: var(--sand);
-}
-
-.experience-loader__panel--accent {
-  left: 50%;
-  z-index: -1;
-  background: var(--rust);
-}
-
-.experience-loader__brand {
-  position: absolute;
-  top: clamp(1.5rem, 4vw, 3.5rem);
-  left: var(--container-pad);
-  right: var(--container-pad);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font: 500 0.65rem var(--font-mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.experience-loader__brand .navbar__logo {
-  color: #1f2928;
-}
-
-.experience-loader__brand .navbar__logo-mark,
-.experience-loader__brand .navbar__wordmark {
-  color: #1f2928 !important;
-}
-
-.experience-loader__count {
-  font: 600 clamp(7rem, 24vw, 22rem)/0.78 var(--font-display);
-  letter-spacing: -0.07em;
-  font-variant-numeric: tabular-nums;
-}
-
-.experience-loader__track {
-  position: absolute;
-  left: var(--container-pad);
-  right: var(--container-pad);
-  bottom: clamp(1.5rem, 4vw, 3.5rem);
-  height: 2px;
-  background: rgba(31, 41, 40, 0.2);
-  overflow: hidden;
-}
-
-.experience-loader__track span {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: #1f2928;
-  transform-origin: left center;
-  transition: transform 70ms linear;
-}
-
 .hero__bg-image {
   filter: brightness(0.78) contrast(1.12) saturate(0.9);
 }
@@ -4241,14 +4167,6 @@ button:focus-visible {
 }
 
 @media (max-width: 600px) {
-  .experience-loader__brand > span {
-    display: none;
-  }
-
-  .experience-loader__count {
-    font-size: 34vw;
-  }
-
   .service-story__frame-ui,
   .service-story__progress {
     left: 1rem;

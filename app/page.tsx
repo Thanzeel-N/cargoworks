@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Lenis from "lenis";
 import {
@@ -422,74 +422,6 @@ function ScrollWords({ children }: { children: string }) {
   ))}</span>;
 }
 
-function IntroLoader({ onDone }: { onDone: () => void }) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      onDone();
-      return;
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const start = performance.now();
-    let frame = 0;
-    let finishTimer = 0;
-
-    const tick = (now: number) => {
-      const progress = Math.min(1, (now - start) / 1550);
-      const eased = 1 - Math.pow(1 - progress, 4);
-      setCount(Math.min(98, Math.round(eased * 98)));
-      if (progress < 1) {
-        frame = window.requestAnimationFrame(tick);
-      } else {
-        setCount(100);
-        finishTimer = window.setTimeout(onDone, 320);
-      }
-    };
-
-    frame = window.requestAnimationFrame(tick);
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.clearTimeout(finishTimer);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [onDone]);
-
-  return (
-    <motion.div
-      className="experience-loader"
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.15, delay: 0.9 }}
-      aria-label={`Loading ${count}%`}
-      role="status"
-    >
-      <motion.div
-        className="experience-loader__panel experience-loader__panel--light"
-        exit={{ x: "-102%" }}
-        transition={{ duration: 1.05, ease: [0.76, 0, 0.24, 1] }}
-      />
-      <motion.div
-        className="experience-loader__panel experience-loader__panel--accent"
-        exit={{ x: "102%" }}
-        transition={{ duration: 1.05, delay: 0.05, ease: [0.76, 0, 0.24, 1] }}
-      />
-      <div className="experience-loader__brand">
-        <CargoworksLogo />
-        <span>Preparing the route</span>
-      </div>
-      <div className="experience-loader__count" aria-hidden="true">
-        {String(count).padStart(3, "0")}
-      </div>
-      <div className="experience-loader__track" aria-hidden="true">
-        <span style={{ transform: `scaleX(${count / 100})` }} />
-      </div>
-    </motion.div>
-  );
-}
-
 function AnimatedStat({ value, label }: { value: string; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.7 });
@@ -714,12 +646,10 @@ export default function Home() {
   const scrolled = useNavScrolled();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [motionPaused, setMotionPaused] = useState(false);
-  const [introComplete, setIntroComplete] = useState(false);
   const [activeService, setActiveService] = useState(0);
 
   const reduceMotion = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
-  const finishIntro = useCallback(() => setIntroComplete(true), []);
 
   useSmoothScroll(motionPaused, reduceMotion);
   useScrollReveal();
@@ -769,10 +699,6 @@ export default function Home() {
 
   return (
     <>
-      <AnimatePresence>
-        {!introComplete && <IntroLoader onDone={finishIntro} />}
-      </AnimatePresence>
-
       {/* ══ NAVBAR ════════════════════════════════════════════ */}
       <header className={`navbar${scrolled ? " scrolled" : ""}`} role="banner">
         <div className="container navbar__inner">
@@ -849,7 +775,7 @@ export default function Home() {
               <motion.div
                 className="hero__eyebrow"
                 initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-                animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.15 }}
               >
                 <span className="hero__eyebrow-dot" />
@@ -860,7 +786,7 @@ export default function Home() {
                 <span className="hero__headline-mask">
                   <motion.span
                     initial={reduceMotion ? false : { y: "110%", rotate: 2 }}
-                    animate={introComplete ? { y: 0, rotate: 0 } : { y: "110%", rotate: 2 }}
+                    animate={{ y: 0, rotate: 0 }}
                     transition={{ duration: 0.95, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
                   >
                     MOVING CARGO
@@ -870,7 +796,7 @@ export default function Home() {
                   <motion.span
                     className="hl-accent"
                     initial={reduceMotion ? false : { y: "110%", rotate: 2 }}
-                    animate={introComplete ? { y: 0, rotate: 0 } : { y: "110%", rotate: 2 }}
+                    animate={{ y: 0, rotate: 0 }}
                     transition={{ duration: 0.95, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
                   >
                     BEYOND BORDERS
@@ -881,7 +807,7 @@ export default function Home() {
               <motion.p
                 className="hero__intro"
                 initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-                animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.52 }}
               >
                 Across oceans. Across continents. One connected logistics partner
@@ -891,7 +817,7 @@ export default function Home() {
               <motion.div
                 className="hero__actions hero__actions--center"
                 initial={reduceMotion ? false : { opacity: 0, y: 22 }}
-                animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.64 }}
               >
                 <a id="hero-cta-primary" href="#contact"
