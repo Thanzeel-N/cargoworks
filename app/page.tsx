@@ -1,7 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Lenis from "lenis";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useMotionValue,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import ContactSection from "./contact-section";
 
 /* ─────────────────────────────────────────────────────────────
@@ -129,6 +141,40 @@ function IconArrowRight({ size = 15 }: { size?: number }) {
   );
 }
 
+function IconFacebook({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+    </svg>
+  );
+}
+
+function IconInstagram({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  );
+}
+
+function IconLinkedin({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+    </svg>
+  );
+}
+
+function IconX({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
 /* ─────────────────────────────────────────────────────────────
    LOGO
 ───────────────────────────────────────────────────────────── */
@@ -200,12 +246,12 @@ const SERVICES = [
 ];
 
 const WHY_ITEMS = [
-  { icon: <IconLayers size={24} />, title: "End-to-End Logistics", desc: "One partner for freight, transportation, warehousing, and customs clearance." },
-  { icon: <IconZap size={24} />, title: "Reliable & Efficient", desc: "Timely deliveries and smooth operations you can count on." },
-  { icon: <IconEye size={24} />, title: "Transparent Service", desc: "Clear communication, pricing, and real-time shipment visibility." },
-  { icon: <IconCpu size={24} />, title: "Technology-Driven", desc: "Modern tools for better tracking and supply chain management." },
-  { icon: <IconHeart size={24} />, title: "Customer-Focused", desc: "Dedicated support from pickup to final delivery." },
-  { icon: <IconTrendingUp size={24} />, title: "Scalable Logistics", desc: "Solutions designed to grow alongside your business." },
+  { icon: <IconLayers size={24} />, image: "/images/why-end-to-end.webp", accent: "#cf5a39", title: "End-to-End Logistics", desc: "One partner for freight, transportation, warehousing, and customs clearance." },
+  { icon: <IconZap size={24} />, image: "/images/why-reliable.webp", accent: "#e2a642", title: "Reliable & Efficient", desc: "Timely deliveries and smooth operations you can count on." },
+  { icon: <IconEye size={24} />, image: "/images/why-transparent.webp", accent: "#78a9b8", title: "Transparent Service", desc: "Clear communication, pricing, and real-time shipment visibility." },
+  { icon: <IconCpu size={24} />, image: "/images/why-technology.webp", accent: "#758ca8", title: "Technology-Driven", desc: "Modern tools for better tracking and supply chain management." },
+  { icon: <IconHeart size={24} />, image: "/images/why-customer.webp", accent: "#d3ba83", title: "Customer-Focused", desc: "Dedicated support from pickup to final delivery." },
+  { icon: <IconTrendingUp size={24} />, image: "/images/why-scalable.webp", accent: "#83a687", title: "Scalable Logistics", desc: "Solutions designed to grow alongside your business." },
 ];
 
 const SECTORS_GRID = [
@@ -256,15 +302,25 @@ const SECTORS_GRID = [
 const REGIONS = [
   { name: "India", desc: "Domestic Network" },
   { name: "UAE", desc: "Gulf Hub" },
-  { name: "Middle East", desc: "Regional Reach" },
-  { name: "Asia", desc: "Asia-Pacific" },
-  { name: "Global Trade Routes", desc: "Worldwide" },
+  { name: "Saudi Arabia", desc: "Kingdom Network" },
+  { name: "Qatar", desc: "Gulf Corridor" },
+  { name: "Oman", desc: "Port Connectivity" },
+  { name: "Bahrain", desc: "Island Gateway" },
+  { name: "Kuwait", desc: "Northern Gulf" },
+  { name: "Singapore", desc: "Southeast Asia Hub" },
+  { name: "Malaysia", desc: "Regional Distribution" },
+  { name: "China", desc: "Manufacturing Routes" },
+  { name: "Japan", desc: "Pacific Trade" },
+  { name: "South Korea", desc: "Technology Corridor" },
+  { name: "Germany", desc: "European Gateway" },
+  { name: "Netherlands", desc: "Port of Europe" },
+  { name: "United States", desc: "North America" },
 ];
 
 const STATS = [
   { value: "2026", label: "Founded" },
   { value: "6", label: "Core Services" },
-  { value: "5+", label: "Regions Served" },
+  { value: "15+", label: "Regions Served" },
   { value: "10+", label: "Industries Served" },
 ];
 
@@ -300,68 +356,41 @@ function useNavScrolled() {
   return scrolled;
 }
 
-// Scroll position owns the animation: stopping or reversing scroll does the same
-// to the color, pattern, and word reveals. No continuous animation loop.
-function useScrollDesign(paused: boolean) {
+function useSmoothScroll(paused: boolean, reduceMotion: boolean | null) {
   useEffect(() => {
-    const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-scroll-surface]"));
-    const words = Array.from(document.querySelectorAll<HTMLElement>(".scroll-copy"));
-    const main = document.getElementById("main-content");
-    const colors: Record<string, number[]> = {
-      sand: [222, 216, 201], dark: [31, 41, 40],
-      slate: [55, 76, 91], rust: [211, 69, 39],
+    if (reduceMotion || paused) return;
+
+    const lenis = new Lenis({
+      duration: 1.15,
+      smoothWheel: true,
+      wheelMultiplier: 0.85,
+      touchMultiplier: 1,
+    });
+    let frame = 0;
+    const animate = (time: number) => {
+      lenis.raf(time);
+      frame = window.requestAnimationFrame(animate);
     };
+
+    frame = window.requestAnimationFrame(animate);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      lenis.destroy();
+    };
+  }, [paused, reduceMotion]);
+}
+
+function useScrollWords(paused: boolean) {
+  useEffect(() => {
+    const words = Array.from(document.querySelectorAll<HTMLElement>(".scroll-copy"));
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
     const clamp = (value: number) => Math.min(1, Math.max(0, value));
-    const mix = (from: number[], to: number[], progress: number) =>
-      `rgb(${from.map((channel, i) => Math.round(channel + (to[i] - channel) * progress)).join(", ")})`;
     const update = () => {
       frame = 0;
       const still = paused || preference.matches;
-      main?.classList.toggle("scroll-design-active", !still);
       const height = window.innerHeight;
-      let background = colors.dark;
-      let nextBackground = colors.dark;
-      let wipeProgress = 0;
-      sections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        const progress = clamp((height - rect.top) / (height * 0.8));
-        const target = colors[section.dataset.scrollSurface || "dark"];
-        // Raise a solid color curtain instead of blending the two colors.
-        // Completed chapters become the base for the next curtain.
-        if (progress === 1) {
-          background = target;
-          nextBackground = target;
-          wipeProgress = 0;
-        } else if (progress > 0) {
-          nextBackground = target;
-          wipeProgress = progress * progress * (3 - 2 * progress);
-        }
-      });
-      main?.style.setProperty("--page-surface", mix(background, background, 1));
-      main?.style.setProperty("--page-next-surface", mix(nextBackground, nextBackground, 1));
-      main?.style.setProperty("--page-wipe-top", `${(1 - wipeProgress) * 100}%`);
-      let navBackground = background;
-      if (still) {
-        navBackground = colors.dark;
-        sections.forEach((section) => {
-          if (section.getBoundingClientRect().top <= 96) {
-            navBackground = colors[section.dataset.scrollSurface || "dark"];
-          }
-        });
-      }
-      if ((document.querySelector("footer")?.getBoundingClientRect().top ?? Infinity) <= 96) {
-        navBackground = colors.dark;
-      }
-      const luminance = navBackground.reduce((sum, channel, index) => {
-        const value = channel / 255;
-        return sum + (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4)
-          * [0.2126, 0.7152, 0.0722][index];
-      }, 0);
-      const root = document.documentElement.style;
-      root.setProperty("--nav-surface", mix(navBackground, navBackground, 1));
-      root.setProperty("--nav-ink", luminance > 0.179 ? "#000000" : "#ffffff");
       words.forEach((block) => {
         const rect = block.getBoundingClientRect();
         const progress = still ? 1 : clamp((height * 0.9 - rect.top) / (height * 0.35));
@@ -383,11 +412,6 @@ function useScrollDesign(paused: boolean) {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       preference.removeEventListener("change", schedule);
-      main?.style.removeProperty("--page-surface");
-      main?.style.removeProperty("--page-next-surface");
-      main?.style.removeProperty("--page-wipe-top");
-      main?.classList.remove("scroll-design-active");
-      ["--nav-surface", "--nav-ink"].forEach((name) => document.documentElement.style.removeProperty(name));
     };
   }, [paused]);
 }
@@ -398,6 +422,291 @@ function ScrollWords({ children }: { children: string }) {
   ))}</span>;
 }
 
+function IntroLoader({ onDone }: { onDone: () => void }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      onDone();
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const start = performance.now();
+    let frame = 0;
+    let finishTimer = 0;
+
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / 1550);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      setCount(Math.min(98, Math.round(eased * 98)));
+      if (progress < 1) {
+        frame = window.requestAnimationFrame(tick);
+      } else {
+        setCount(100);
+        finishTimer = window.setTimeout(onDone, 320);
+      }
+    };
+
+    frame = window.requestAnimationFrame(tick);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(finishTimer);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [onDone]);
+
+  return (
+    <motion.div
+      className="experience-loader"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15, delay: 0.9 }}
+      aria-label={`Loading ${count}%`}
+      role="status"
+    >
+      <motion.div
+        className="experience-loader__panel experience-loader__panel--light"
+        exit={{ x: "-102%" }}
+        transition={{ duration: 1.05, ease: [0.76, 0, 0.24, 1] }}
+      />
+      <motion.div
+        className="experience-loader__panel experience-loader__panel--accent"
+        exit={{ x: "102%" }}
+        transition={{ duration: 1.05, delay: 0.05, ease: [0.76, 0, 0.24, 1] }}
+      />
+      <div className="experience-loader__brand">
+        <CargoworksLogo />
+        <span>Preparing the route</span>
+      </div>
+      <div className="experience-loader__count" aria-hidden="true">
+        {String(count).padStart(3, "0")}
+      </div>
+      <div className="experience-loader__track" aria-hidden="true">
+        <span style={{ transform: `scaleX(${count / 100})` }} />
+      </div>
+    </motion.div>
+  );
+}
+
+function AnimatedStat({ value, label }: { value: string; label: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.7 });
+  const [display, setDisplay] = useState("0");
+
+  useEffect(() => {
+    if (!isInView) return;
+    const number = Number.parseInt(value, 10);
+    const suffix = value.replace(/[\d,]/g, "");
+    let frame = 0;
+    if (!Number.isFinite(number) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      frame = window.requestAnimationFrame(() => setDisplay(value));
+      return () => window.cancelAnimationFrame(frame);
+    }
+    const start = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / 1200);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      setDisplay(`${Math.round(number * eased)}${suffix}`);
+      if (progress < 1) frame = window.requestAnimationFrame(tick);
+    };
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
+  }, [isInView, value]);
+
+  return (
+    <div ref={ref} className="about__stat reveal">
+      <div className="about__stat-value">{display}</div>
+      <div className="about__stat-label">{label}</div>
+    </div>
+  );
+}
+
+function CoverageRoute() {
+  const routeRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const [truckRotation, setTruckRotation] = useState(0);
+  const { scrollYProgress } = useScroll({
+    target: routeRef,
+    offset: ["start 88%", "end 12%"],
+  });
+  const truckY = useTransform(
+    scrollYProgress,
+    [0, 0.12, 0.88, 1],
+    ["-58vh", "0vh", "0vh", "58vh"],
+  );
+  const truckOpacity = useTransform(
+    scrollYProgress,
+    (progress) => (progress >= 0.07 && progress <= 0.93 ? 1 : 0),
+  );
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    const previous = scrollYProgress.getPrevious();
+    if (previous === undefined) return;
+
+    if (latest < previous && latest >= 0.93) {
+      setTruckRotation((current) => (current === 180 ? current : 180));
+    } else if (latest > previous && latest <= 0.07) {
+      setTruckRotation((current) => (current === 0 ? current : 0));
+    }
+  });
+
+  return (
+    <div ref={routeRef} className="coverage-route">
+      <div className="coverage-route__stage" aria-hidden="true">
+        <div className="coverage-route__truck-anchor">
+          <motion.div
+            className="coverage-truck"
+            animate={{ rotate: truckRotation }}
+            transition={{
+              rotate: reduceMotion
+                ? { duration: 0 }
+                : { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+            }}
+            style={{
+              y: reduceMotion ? 0 : truckY,
+              opacity: truckOpacity,
+            }}
+          >
+            <Image
+              src="/images/top-view-container-truck-v2.webp"
+              alt=""
+              width={1024}
+              height={1536}
+              sizes="(max-width: 700px) 34vw, 15vw"
+            />
+
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="coverage-country-list reveal reveal-delay-2">
+        {REGIONS.map((region, index) => (
+          <article key={region.name} className="coverage-country-row">
+            <div className="coverage-country-row__primary">
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{region.name}</h3>
+            </div>
+            <div className="coverage-country-row__lane" aria-hidden="true" />
+            <p>{region.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SwingingContainer() {
+  const reduceMotion = useReducedMotion();
+  const targetRotateX = useMotionValue(0);
+  const targetRotateZ = useMotionValue(0);
+  const rotateX = useSpring(targetRotateX, { stiffness: 70, damping: 12, mass: 0.9 });
+  const rotateZ = useSpring(targetRotateZ, { stiffness: 58, damping: 10, mass: 1.05 });
+
+  const resetSwing = () => {
+    targetRotateX.set(0);
+    targetRotateZ.set(0);
+  };
+
+  return (
+    <motion.div
+      className="industries-split__swing"
+      style={reduceMotion ? undefined : { rotateX, rotateZ, transformPerspective: 1200 }}
+      onPointerMove={(event) => {
+        if (reduceMotion) return;
+        const bounds = event.currentTarget.getBoundingClientRect();
+        const x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+        const y = ((event.clientY - bounds.top) / bounds.height) * 2 - 1;
+        targetRotateZ.set(x * 7);
+        targetRotateX.set(-y * 3.5);
+      }}
+      onPointerLeave={resetSwing}
+    >
+      <Image
+        src="/images/hanging-container-v2.webp"
+        alt=""
+        width={1254}
+        height={1254}
+        sizes="(max-width: 760px) 88vw, (max-width: 1100px) 42vw, 34vw"
+      />
+      <span className="industries-split__swing-hint">Move cursor to swing</span>
+    </motion.div>
+  );
+}
+
+function WhyCarousel() {
+  const [active, setActive] = useState(0);
+  const total = WHY_ITEMS.length;
+  const select = (next: number) => setActive((next + total) % total);
+  const relativeIndex = (index: number) => {
+    let offset = index - active;
+    if (offset > total / 2) offset -= total;
+    if (offset < -total / 2) offset += total;
+    return offset;
+  };
+
+  return (
+    <div className="why-carousel reveal" aria-roledescription="carousel" aria-label="Why choose Cargoworks">
+      <motion.div
+        className="why-carousel__stage"
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.16}
+        onDragEnd={(_, info) => {
+          if (info.offset.x < -55) select(active + 1);
+          if (info.offset.x > 55) select(active - 1);
+        }}
+      >
+        {WHY_ITEMS.map((item, index) => {
+          const offset = relativeIndex(index);
+          const distance = Math.abs(offset);
+          const visible = distance <= 2;
+
+          return (
+            <button
+              type="button"
+              key={item.title}
+              className={`why-carousel__card${offset === 0 ? " is-active" : ""}`}
+              style={{
+                "--why-x": `${offset * 73}%`,
+                "--why-y": `${distance * 42}px`,
+                "--why-rotate": `${offset * 6}deg`,
+                "--why-scale": offset === 0 ? "1" : distance === 1 ? "0.79" : "0.67",
+                "--why-opacity": visible ? (offset === 0 ? "1" : distance === 1 ? "0.64" : "0.25") : "0",
+                "--why-accent": item.accent,
+                zIndex: 10 - distance,
+                pointerEvents: visible ? "auto" : "none",
+              } as React.CSSProperties}
+              onClick={() => select(index)}
+              aria-label={`Show ${item.title}`}
+              aria-current={offset === 0 ? "true" : undefined}
+            >
+              <Image src={item.image} alt="" fill sizes="(max-width: 700px) 76vw, 28vw" />
+              <span className="why-carousel__shade" />
+              <span className="why-carousel__topline">
+                <span className="why-carousel__icon" aria-hidden="true">{item.icon}</span>
+                <small>{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</small>
+              </span>
+              <span className="why-carousel__meta">
+                <strong>{item.title}</strong>
+                <span>{item.desc}</span>
+              </span>
+            </button>
+          );
+        })}
+      </motion.div>
+
+      <div className="why-carousel__controls">
+        <button type="button" onClick={() => select(active - 1)} aria-label="Previous advantage">&larr;</button>
+        <span>{String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
+        <button type="button" onClick={() => select(active + 1)} aria-label="Next advantage">&rarr;</button>
+      </div>
+      <p className="why-carousel__hint">Drag the cards to explore</p>
+    </div>
+  );
+}
+
 /* ─────────────────────────────────────────────────────────────
    PAGE
 ───────────────────────────────────────────────────────────── */
@@ -405,8 +714,24 @@ export default function Home() {
   const scrolled = useNavScrolled();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [motionPaused, setMotionPaused] = useState(false);
+  const [introComplete, setIntroComplete] = useState(false);
+  const [activeService, setActiveService] = useState(0);
+
+  const reduceMotion = useReducedMotion();
+  const heroRef = useRef<HTMLElement>(null);
+  const finishIntro = useCallback(() => setIntroComplete(true), []);
+
+  useSmoothScroll(motionPaused, reduceMotion);
   useScrollReveal();
-  useScrollDesign(motionPaused);
+  useScrollWords(motionPaused);
+
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const heroContentYRaw = useTransform(heroProgress, [0, 1], [0, -76]);
+  const heroContentOpacity = useTransform(heroProgress, [0, 0.72, 1], [1, 0.96, 0]);
+  const heroContentY = useSpring(heroContentYRaw, { stiffness: 110, damping: 28 });
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -444,6 +769,10 @@ export default function Home() {
 
   return (
     <>
+      <AnimatePresence>
+        {!introComplete && <IntroLoader onDone={finishIntro} />}
+      </AnimatePresence>
+
       {/* ══ NAVBAR ════════════════════════════════════════════ */}
       <header className={`navbar${scrolled ? " scrolled" : ""}`} role="banner">
         <div className="container navbar__inner">
@@ -501,33 +830,70 @@ export default function Home() {
       </nav>
 
       <main id="main-content" className={motionPaused ? "motion-paused" : undefined}>
-        <div className="page-color-canvas" aria-hidden="true" />
         {/* ══ HERO ══════════════════════════════════════════════ */}
-        <section id="hero" className="hero" aria-label="Hero">
+        <section ref={heroRef} id="hero" className="hero" aria-label="Hero">
           {/* Background */}
           <div className="hero__bg-image" aria-hidden="true" />
           <div className="hero__dots" aria-hidden="true" />
           <div className="hero__fade" aria-hidden="true" />
 
           {/* Centered layout */}
-          <div className="hero__body hero__body--center">
+          <motion.div
+            className="hero__body hero__body--center"
+            style={{
+              y: reduceMotion || motionPaused ? 0 : heroContentY,
+              opacity: reduceMotion || motionPaused ? 1 : heroContentOpacity,
+            }}
+          >
             <div className="hero__content-center">
-              <div className="hero__eyebrow reveal">
+              <motion.div
+                className="hero__eyebrow"
+                initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+                animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+                transition={{ duration: 0.7, delay: 0.15 }}
+              >
                 <span className="hero__eyebrow-dot" />
-                GLOBAL LOGISTICS NETWORK &nbsp;·&nbsp; KOCHI HQ
-              </div>
+                GLOBAL LOGISTICS NETWORK &nbsp;&middot;&nbsp; KOCHI HQ
+              </motion.div>
 
-              <h1 className="hero__headline hero__headline--center reveal reveal-delay-1">
-                <span>MOVING CARGO</span>
-                <span className="hl-accent">BEYOND BORDERS</span>
+              <h1 className="hero__headline hero__headline--center">
+                <span className="hero__headline-mask">
+                  <motion.span
+                    initial={reduceMotion ? false : { y: "110%", rotate: 2 }}
+                    animate={introComplete ? { y: 0, rotate: 0 } : { y: "110%", rotate: 2 }}
+                    transition={{ duration: 0.95, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    MOVING CARGO
+                  </motion.span>
+                </span>
+                <span className="hero__headline-mask">
+                  <motion.span
+                    className="hl-accent"
+                    initial={reduceMotion ? false : { y: "110%", rotate: 2 }}
+                    animate={introComplete ? { y: 0, rotate: 0 } : { y: "110%", rotate: 2 }}
+                    transition={{ duration: 0.95, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    BEYOND BORDERS
+                  </motion.span>
+                </span>
               </h1>
 
-              <p className="hero__intro reveal reveal-delay-2">
+              <motion.p
+                className="hero__intro"
+                initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+                animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+                transition={{ duration: 0.8, delay: 0.52 }}
+              >
                 Across oceans. Across continents. One connected logistics partner
                 to keep your business moving.
-              </p>
+              </motion.p>
 
-              <div className="hero__actions hero__actions--center reveal reveal-delay-2">
+              <motion.div
+                className="hero__actions hero__actions--center"
+                initial={reduceMotion ? false : { opacity: 0, y: 22 }}
+                animate={introComplete ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
+                transition={{ duration: 0.8, delay: 0.64 }}
+              >
                 <a id="hero-cta-primary" href="#contact"
                   className="btn btn-primary btn-lg"
                   onClick={(e) => smoothTo(e, "contact")}>
@@ -536,11 +902,12 @@ export default function Home() {
                 <a id="hero-cta-secondary" href="#services"
                   className="btn btn-ghost btn-lg"
                   onClick={(e) => smoothTo(e, "services")}>
-                  Our Services <IconArrowRight size={13} />
+                  Explore services <IconArrowRight size={13} />
                 </a>
-              </div>
+              </motion.div>
+
             </div>
-          </div>
+          </motion.div>
 
           {/* Marquee regions strip */}
           <div className="hero__strip">
@@ -594,11 +961,8 @@ export default function Home() {
 
             {/* Stat boxes — exact layout from reference */}
             <div className="about__stats">
-              {STATS.map((s, i) => (
-                <div key={s.label} className={`about__stat reveal reveal-delay-${i + 1}`}>
-                  <div className="about__stat-value">{s.value}</div>
-                  <div className="about__stat-label">{s.label}</div>
-                </div>
+              {STATS.map((stat) => (
+                <AnimatedStat key={stat.label} value={stat.value} label={stat.label} />
               ))}
             </div>
 
@@ -620,50 +984,58 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Services List (Exact Layout & Pop-up from Reference Image) */}
-            <div className="services__rows-ref">
-              {SERVICES.map((s, i) => (
-                <div
-                  key={s.title}
-                  className={`service-row-ref reveal reveal-delay-${(i % 4) + 1}`}
-                >
-                  {/* Top Row: Number + Title + Arrow Button */}
-                  <div className="service-row-ref__header">
-                    <div className="service-row-ref__title-group">
-                      <span className="service-row-ref__num">0{i + 1}</span>
-                      <h3 className="service-row-ref__title">{s.title}</h3>
-                    </div>
-
-                    {/* Circular Arrow Action Button (Turns Accent Color on Hover) */}
-                    <a
-                      href="#contact"
-                      className="service-row-ref__arrow-btn"
-                      onClick={(e) => smoothTo(e, "contact")}
-                      aria-label={`Request quote for ${s.title}`}
+            <div className="service-story">
+              <div className="service-story__media" aria-live="polite">
+                <div className="service-story__frame">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={SERVICES[activeService].image}
+                      className="service-story__image"
+                      initial={reduceMotion ? false : { clipPath: "inset(100% 0 0 0)", scale: 1.12 }}
+                      animate={{ clipPath: "inset(0% 0 0 0)", scale: 1 }}
+                      exit={{ clipPath: "inset(0 0 100% 0)", scale: 1.04 }}
+                      transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
                     >
-                      <span className="arrow-icon" aria-hidden="true">↗</span>
-                    </a>
+                      <Image
+                        src={SERVICES[activeService].image}
+                        alt={SERVICES[activeService].title}
+                        fill
+                        sizes="(max-width: 900px) 100vw, 48vw"
+                        priority={activeService === 0}
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                  <div className="service-story__frame-ui" aria-hidden="true">
+                    <span>CW / SERVICE 0{activeService + 1}</span>
+                    <span>{SERVICES[activeService].tag}</span>
                   </div>
-
-                  {/* Expandable Description Underneath */}
-                  <div className="service-row-ref__desc-wrap">
-                    <p className="service-row-ref__desc">{s.desc}</p>
-                  </div>
-
-                  {/* Floating Tilted Image Pop-up Card (Exact Match to Reference Photo) */}
-                  <div className="service-row-ref__image-popup">
-                    <Image
-                      src={s.image}
-                      alt={s.title}
-                      width={310}
-                      height={310}
-                      className="service-row-ref__popup-img"
-                    />
-                    <div className="service-row-ref__popup-overlay" />
-                    <span className="service-row-ref__popup-tag">{s.tag}</span>
+                  <div className="service-story__progress" aria-hidden="true">
+                    <span style={{ transform: `scaleX(${(activeService + 1) / SERVICES.length})` }} />
                   </div>
                 </div>
-              ))}
+              </div>
+
+              <div className="service-story__chapters">
+                {SERVICES.map((service, index) => (
+                  <motion.article
+                    key={service.title}
+                    className={`service-story__chapter${activeService === index ? " is-active" : ""}`}
+                    onViewportEnter={() => setActiveService(index)}
+                    viewport={{ amount: 0.58 }}
+                  >
+                    <span className="service-story__number">0{index + 1}</span>
+                    <p className="service-story__tag">{service.tag}</p>
+                    <h3>{service.title}</h3>
+                    <p>{service.desc}</p>
+                    <ul>
+                      {service.items.map((item) => <li key={item}>{item}</li>)}
+                    </ul>
+                    <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>
+                      Plan this route <IconArrowRight />
+                    </a>
+                  </motion.article>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -672,28 +1044,19 @@ export default function Home() {
         <section id="why-us" className="why" data-scroll-surface="slate">
           <div className="container">
             <div className="why__intro reveal">
-              <div className="label-line" style={{ marginBottom: "0.875rem" }}>
+              <div className="label-line why__eyebrow">
                 Our Edge
               </div>
-              <h2 className="section-title">Why Choose Cargoworks</h2>
-            </div>
-
-            <div className="why__grid">
-              {WHY_ITEMS.map((item, i) => (
-                <div
-                  key={item.title}
-                  className={`why-card reveal reveal-delay-${(i % 3) + 1}`}
-                  data-num={String(i + 1).padStart(2, "0")}
-                >
-                  <div className="why-card__icon" aria-hidden="true">
-                    {item.icon}
-                  </div>
-                  <h3 className="why-card__title">{item.title}</h3>
-                  <p className="why-card__desc">{item.desc}</p>
-                </div>
-              ))}
+              <h2 className="why__statement">
+                <span>Why choose.</span>
+                <span>Cargoworks.</span>
+              </h2>
+              <p className="why__intro-copy">
+                Six practical advantages. One logistics partner built to keep every shipment visible, reliable, and ready to scale.
+              </p>
             </div>
           </div>
+          <WhyCarousel />
         </section>
 
         {/* ══ INDUSTRIES & AREAS ════════════════════════════════ */}
@@ -713,21 +1076,40 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Ultra-Minimal Sectors Grid */}
+          {/* Split industry list with suspended cargo centerpiece */}
           <div className="container">
-            <div className="sectors-min-grid">
-              {SECTORS_GRID.map((sec, i) => (
-                <div
-                  key={sec.code}
-                  className={`sector-min-card reveal reveal-delay-${(i % 3) + 1}`}
+            <div className="industries-split">
+              <div className="industries-split__list industries-split__list--left">
+                {SECTORS_GRID.slice(0, 3).map((sec, i) => (
+                  <article key={sec.code} className={`industry-side-item reveal reveal-delay-${i + 1}`}>
+                    <span className="industry-side-item__num">0{i + 1}</span>
+                    <h3 className="industry-side-item__title">{sec.title}</h3>
+                    <p className="industry-side-item__desc">{sec.desc}</p>
+                  </article>
+                ))}
+              </div>
+
+              <div className="industries-split__center" aria-hidden="true">
+                <motion.div
+                  className="industries-split__container"
+                  initial={{ opacity: 0, y: -72, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, amount: 0.25 }}
+                  transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <span className="sector-min-card__num">0{i + 1}</span>
-                  <div className="sector-min-card__content">
-                    <h3 className="sector-min-card__title">{sec.title}</h3>
-                    <p className="sector-min-card__desc">{sec.desc}</p>
-                  </div>
-                </div>
-              ))}
+                  <SwingingContainer />
+                </motion.div>
+              </div>
+
+              <div className="industries-split__list industries-split__list--right">
+                {SECTORS_GRID.slice(3).map((sec, i) => (
+                  <article key={sec.code} className={`industry-side-item reveal reveal-delay-${i + 1}`}>
+                    <span className="industry-side-item__num">0{i + 4}</span>
+                    <h3 className="industry-side-item__title">{sec.title}</h3>
+                    <p className="industry-side-item__desc">{sec.desc}</p>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -747,15 +1129,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="regions-grid reveal reveal-delay-2">
-              {REGIONS.map((r, i) => (
-                <div key={r.name} className="region-card">
-                  <span className="region-card__num">{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className="region-card__name">{r.name}</h3>
-                  <span className="region-card__desc">{r.desc}</span>
-                </div>
-              ))}
-            </div>
+            <CoverageRoute />
           </div>
         </section>
 
@@ -792,26 +1166,129 @@ export default function Home() {
         <ContactSection />
       </main>
 
-      {/* ══ FOOTER ════════════════════════════════════════════ */}
-      <footer className="footer" role="contentinfo">
+      {/* ══ FOOTER (DELTA CAFÉS EDITORIAL STYLE) ═══════════════ */}
+      <footer className="footer-delta" role="contentinfo">
         <div className="container">
-          <div className="footer__directory">
-            <div className="footer__location">
-              <span className="footer__col-title">ROOTED IN KOCHI. CONNECTED GLOBALLY.</span>
-              <a href="mailto:info@cargoworkslogistics.com">info@cargoworkslogistics.com <IconArrowRight size={16} /></a>
-              <p>India &middot; UAE &middot; Middle East &middot; Asia</p>
+          <div className="footer-delta__wrapper">
+            <div className="footer-delta__grid">
+              {/* 1. Left Brand & Socials Column */}
+              <div className="footer-delta__col-brand">
+                <div className="footer-delta__emblem">
+                  <span className="footer-delta__emblem-mark" aria-hidden="true">
+                    <svg width="68" height="42" viewBox="0 0 100 56" fill="currentColor">
+                      <path d="M0 7 6 1 100 9 100 46 97 47 97 12 94 13 94 47 89 48 89 12 80 14 80 49 70 50 70 11 55 14 55 52 40 53 40 8 20 11 20 54 6 56 0 50Z" />
+                    </svg>
+                  </span>
+                  <span className="footer-delta__emblem-name">CARGOWORKS</span>
+                </div>
+
+                <div className="footer-delta__socials" aria-label="Social media channels">
+                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="footer-delta__social-btn" aria-label="LinkedIn">
+                    <IconLinkedin />
+                  </a>
+                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="footer-delta__social-btn" aria-label="Instagram">
+                    <IconInstagram />
+                  </a>
+                  <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="footer-delta__social-btn" aria-label="X (Twitter)">
+                    <IconX />
+                  </a>
+                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="footer-delta__social-btn" aria-label="Facebook">
+                    <IconFacebook />
+                  </a>
+                </div>
+              </div>
+
+              {/* 2. Column 1: CARGOWORKS */}
+              <div className="footer-delta__col-nav">
+                <h4 className="footer-delta__col-title">CARGOWORKS</h4>
+                <ul className="footer-delta__links">
+                  <li><a href="#about" onClick={(e) => smoothTo(e, "about")}>Our History</a></li>
+                  <li><a href="#about" onClick={(e) => smoothTo(e, "about")}>About Cargoworks</a></li>
+                  <li><a href="#mission" onClick={(e) => smoothTo(e, "mission")}>Mission & Vision</a></li>
+                </ul>
+
+                <ul className="footer-delta__links footer-delta__links--secondary">
+                  <li><a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Online Rate Desk</a></li>
+                  <li><a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Why Choose Us</a></li>
+                  <li><a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Kochi Headquarters</a></li>
+                </ul>
+              </div>
+
+              {/* 3. Column 2: GLOBAL CORRIDORS */}
+              <div className="footer-delta__col-nav">
+                <h4 className="footer-delta__col-title">GLOBAL CORRIDORS</h4>
+                <ul className="footer-delta__links">
+                  <li className="footer-delta__link-group-title">Trade Corridors</li>
+                  <li className="footer-delta__link-sub"><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>India Domestic Hub</a></li>
+                  <li className="footer-delta__link-sub"><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>UAE Gulf Hub</a></li>
+                  <li className="footer-delta__link-sub"><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Middle East Routes</a></li>
+                  <li className="footer-delta__link-sub"><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Asia-Pacific</a></li>
+                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Global Trade Lines</a></li>
+                  <li><a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Supply Chain Intelligence</a></li>
+                </ul>
+              </div>
+
+              {/* 4. Column 3: SOLUTIONS & SECTORS */}
+              <div className="footer-delta__col-nav">
+                <h4 className="footer-delta__col-title">SOLUTIONS</h4>
+                <ul className="footer-delta__links">
+                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Ocean & Sea Freight</a></li>
+                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Air Freight Express</a></li>
+                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Transportation & Last-Mile</a></li>
+                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Smart Warehousing</a></li>
+                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Customs & Compliance</a></li>
+                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>3PL Supply Chain</a></li>
+                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>EV & Automotive Logistics</a></li>
+                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Pharma Cold-Chain</a></li>
+                </ul>
+              </div>
+
+              {/* 5. Column 4: CONTACT & SUPPORT */}
+              <div className="footer-delta__col-contact">
+                <div className="footer-delta__contact-item">
+                  <span className="footer-delta__contact-label">EMAIL</span>
+                  <a href="mailto:info@cargoworkslogistics.com" className="footer-delta__contact-email">
+                    info@cargoworkslogistics.com
+                  </a>
+                </div>
+
+                <div className="footer-delta__contact-item">
+                  <span className="footer-delta__contact-label">CUSTOMER SUPPORT</span>
+                  <a href="tel:+914842900000" className="footer-delta__contact-phone">
+                    +91 484 290 0000*
+                  </a>
+                </div>
+
+                <div className="footer-delta__contact-item">
+                  <span className="footer-delta__contact-label">OPERATIONS & DISPATCH</span>
+                  <a href="tel:+919895000000" className="footer-delta__contact-phone">
+                    +91 9895 000 000*
+                  </a>
+                  <p className="footer-delta__contact-footnote">
+                    *available Mon–Sat 9:00 AM – 6:00 PM IST · Kochi HQ & Gulf Hubs
+                  </p>
+                </div>
+              </div>
             </div>
-            <nav className="footer__nav" aria-label="Footer">
-              {[['services', 'Services'], ['industries', 'Industries'], ['about', 'About us'], ['contact', 'Contact']].map(([id, label]) => (
-                <a key={id} href={`#${id}`} onClick={(e) => smoothTo(e, id)}>{label}</a>
-              ))}
-            </nav>
-          </div>
-          <div className="footer__signature" aria-hidden="true">cargoworks<span>&#8599;</span></div>
-          <div className="footer__bottom">
-            <p className="footer__copy">&copy; {new Date().getFullYear()} Cargoworks. All rights reserved.</p>
-            <span className="footer__closing">Beyond borders. Always forward.</span>
-            <a className="footer__top" href="#hero" onClick={(e) => smoothTo(e, "hero")}>Back to top <span aria-hidden="true">&uarr;</span></a>
+
+            {/* Bottom Bar: Copyright, Legal Links, Back to Top */}
+            <div className="footer-delta__bottom">
+              <span className="footer-delta__brand-id">CARGOWORKS</span>
+
+              <div className="footer-delta__legal-links">
+                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>ELECTRONIC INQUIRY DESK</a>
+                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>TRADE COMPLIANCE</a>
+                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>PRIVACY POLICY</a>
+                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>TERMS AND CONDITIONS</a>
+                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>COOKIE POLICY</a>
+              </div>
+
+              <div className="footer-delta__back-to-top">
+                <a href="#hero" onClick={(e) => smoothTo(e, "hero")}>
+                  BACK TO TOP <span aria-hidden="true">&uarr;</span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
