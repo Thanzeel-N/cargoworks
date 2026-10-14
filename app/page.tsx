@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Lenis from "lenis";
 import {
-  AnimatePresence,
   motion,
   useInView,
   useMotionValue,
@@ -650,6 +649,7 @@ export default function Home() {
 
   const reduceMotion = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
+  const serviceChaptersRef = useRef<HTMLDivElement>(null);
 
   useSmoothScroll(motionPaused, reduceMotion);
   useScrollReveal();
@@ -662,6 +662,18 @@ export default function Home() {
   const heroContentYRaw = useTransform(heroProgress, [0, 1], [0, -76]);
   const heroContentOpacity = useTransform(heroProgress, [0, 0.72, 1], [1, 0.96, 0]);
   const heroContentY = useSpring(heroContentYRaw, { stiffness: 110, damping: 28 });
+  const { scrollYProgress: serviceProgress } = useScroll({
+    target: serviceChaptersRef,
+    offset: ["start center", "end center"],
+  });
+
+  useMotionValueEvent(serviceProgress, "change", (latest) => {
+    const nextService = Math.max(
+      0,
+      Math.min(SERVICES.length - 1, Math.floor(latest * SERVICES.length)),
+    );
+    setActiveService((current) => current === nextService ? current : nextService);
+  });
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -913,24 +925,28 @@ export default function Home() {
             <div className="service-story">
               <div className="service-story__media" aria-live="polite">
                 <div className="service-story__frame">
-                  <AnimatePresence mode="wait">
+                  {SERVICES.map((service, index) => {
+                    const isActive = activeService === index;
+                    return (
                     <motion.div
-                      key={SERVICES[activeService].image}
+                      key={service.image}
                       className="service-story__image"
-                      initial={reduceMotion ? false : { clipPath: "inset(100% 0 0 0)", scale: 1.12 }}
-                      animate={{ clipPath: "inset(0% 0 0 0)", scale: 1 }}
-                      exit={{ clipPath: "inset(0 0 100% 0)", scale: 1.04 }}
-                      transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
+                      initial={false}
+                      animate={{ opacity: isActive ? 1 : 0, scale: isActive ? 1 : 1.025 }}
+                      transition={{ duration: reduceMotion ? 0 : 0.2, ease: "easeOut" }}
+                      style={{ zIndex: isActive ? 2 : 1 }}
+                      aria-hidden={!isActive}
                     >
                       <Image
-                        src={SERVICES[activeService].image}
-                        alt={SERVICES[activeService].title}
+                        src={service.image}
+                        alt={isActive ? service.title : ""}
                         fill
                         sizes="(max-width: 900px) 100vw, 48vw"
-                        priority={activeService === 0}
+                        loading="eager"
                       />
                     </motion.div>
-                  </AnimatePresence>
+                    );
+                  })}
                   <div className="service-story__frame-ui" aria-hidden="true">
                     <span>CW / SERVICE 0{activeService + 1}</span>
                     <span>{SERVICES[activeService].tag}</span>
@@ -941,13 +957,11 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="service-story__chapters">
+              <div ref={serviceChaptersRef} className="service-story__chapters">
                 {SERVICES.map((service, index) => (
                   <motion.article
                     key={service.title}
                     className={`service-story__chapter${activeService === index ? " is-active" : ""}`}
-                    onViewportEnter={() => setActiveService(index)}
-                    viewport={{ amount: 0.58 }}
                   >
                     <span className="service-story__number">0{index + 1}</span>
                     <p className="service-story__tag">{service.tag}</p>
@@ -1093,8 +1107,59 @@ export default function Home() {
       </main>
 
       {/* ══ FOOTER (DELTA CAFÉS EDITORIAL STYLE) ═══════════════ */}
-      <footer className="footer-delta" role="contentinfo">
-        <div className="container">
+      <footer className="footer-minimal" role="contentinfo">
+        <div className="footer-minimal__image" aria-hidden="true" />
+        <div className="footer-minimal__shade" aria-hidden="true" />
+
+        <div className="container footer-minimal__inner">
+          <div className="footer-minimal__main">
+            <div className="footer-minimal__message">
+              <span className="footer-minimal__eyebrow">Kochi / India / Worldwide</span>
+              <h2>Built to move.<br /><span>Ready for everywhere.</span></h2>
+            </div>
+
+            <div className="footer-minimal__contact">
+              <p>Have cargo ready to move?</p>
+              <a href="mailto:info@cargoworkslogistics.com" className="footer-minimal__email">
+                info@cargoworkslogistics.com
+              </a>
+              <a href="#contact" className="btn btn-primary btn-lg"
+                onClick={(e) => smoothTo(e, "contact")}>
+                Start a shipment <IconArrowRight />
+              </a>
+            </div>
+          </div>
+
+          <div className="footer-minimal__bar">
+            <a href="#hero" className="footer-minimal__brand" onClick={(e) => smoothTo(e, "hero")}>
+              <svg width="45" height="28" viewBox="0 0 100 56" fill="currentColor" aria-hidden="true">
+                <path d="M0 7 6 1 100 9 100 46 97 47 97 12 94 13 94 47 89 48 89 12 80 14 80 49 70 50 70 11 55 14 55 52 40 53 40 8 20 11 20 54 6 56 0 50Z" />
+              </svg>
+              <span>Cargoworks</span>
+            </a>
+
+            <nav className="footer-minimal__nav" aria-label="Footer navigation">
+              <a href="#about" onClick={(e) => smoothTo(e, "about")}>About</a>
+              <a href="#services" onClick={(e) => smoothTo(e, "services")}>Services</a>
+              <a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Coverage</a>
+              <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Contact</a>
+            </nav>
+
+            <div className="footer-minimal__socials" aria-label="Social media channels">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><IconLinkedin /></a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><IconInstagram /></a>
+              <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="X"><IconX /></a>
+            </div>
+          </div>
+
+          <div className="footer-minimal__legal">
+            <span>&copy; {new Date().getFullYear()} Cargoworks Logistics</span>
+            <span>Global logistics / Kochi HQ</span>
+            <a href="#hero" onClick={(e) => smoothTo(e, "hero")}>Back to top &uarr;</a>
+          </div>
+        </div>
+
+        <div className="footer-minimal__legacy" hidden aria-hidden="true">
           <div className="footer-delta__wrapper">
             <div className="footer-delta__grid">
               {/* 1. Left Brand & Socials Column */}
@@ -1124,48 +1189,36 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* 2. Column 1: CARGOWORKS */}
+              {/* Company */}
               <div className="footer-delta__col-nav">
-                <h4 className="footer-delta__col-title">CARGOWORKS</h4>
+                <h4 className="footer-delta__col-title">Company</h4>
                 <ul className="footer-delta__links">
-                  <li><a href="#about" onClick={(e) => smoothTo(e, "about")}>Our History</a></li>
-                  <li><a href="#about" onClick={(e) => smoothTo(e, "about")}>About Cargoworks</a></li>
+                  <li><a href="#about" onClick={(e) => smoothTo(e, "about")}>About Us</a></li>
+                  <li><a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Why Cargoworks</a></li>
                   <li><a href="#mission" onClick={(e) => smoothTo(e, "mission")}>Mission & Vision</a></li>
-                </ul>
-
-                <ul className="footer-delta__links footer-delta__links--secondary">
-                  <li><a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Online Rate Desk</a></li>
-                  <li><a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Why Choose Us</a></li>
-                  <li><a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Kochi Headquarters</a></li>
+                  <li><a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Contact</a></li>
                 </ul>
               </div>
 
-              {/* 3. Column 2: GLOBAL CORRIDORS */}
+              {/* Coverage */}
               <div className="footer-delta__col-nav">
-                <h4 className="footer-delta__col-title">GLOBAL CORRIDORS</h4>
+                <h4 className="footer-delta__col-title">Coverage</h4>
                 <ul className="footer-delta__links">
-                  <li className="footer-delta__link-group-title">Trade Corridors</li>
-                  <li className="footer-delta__link-sub"><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>India Domestic Hub</a></li>
-                  <li className="footer-delta__link-sub"><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>UAE Gulf Hub</a></li>
-                  <li className="footer-delta__link-sub"><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Middle East Routes</a></li>
-                  <li className="footer-delta__link-sub"><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Asia-Pacific</a></li>
-                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Global Trade Lines</a></li>
-                  <li><a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Supply Chain Intelligence</a></li>
+                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>India Network</a></li>
+                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Gulf & Middle East</a></li>
+                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Asia-Pacific</a></li>
+                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Global Trade Routes</a></li>
                 </ul>
               </div>
 
-              {/* 4. Column 3: SOLUTIONS & SECTORS */}
+              {/* Solutions */}
               <div className="footer-delta__col-nav">
-                <h4 className="footer-delta__col-title">SOLUTIONS</h4>
+                <h4 className="footer-delta__col-title">Solutions</h4>
                 <ul className="footer-delta__links">
-                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Ocean & Sea Freight</a></li>
-                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Air Freight Express</a></li>
-                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Transportation & Last-Mile</a></li>
-                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Smart Warehousing</a></li>
-                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Customs & Compliance</a></li>
-                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>3PL Supply Chain</a></li>
-                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>EV & Automotive Logistics</a></li>
-                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Pharma Cold-Chain</a></li>
+                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Sea & Air Freight</a></li>
+                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Road & Last-Mile</a></li>
+                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Warehousing</a></li>
+                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Customs & 3PL</a></li>
                 </ul>
               </div>
 
@@ -1202,11 +1255,9 @@ export default function Home() {
               <span className="footer-delta__brand-id">CARGOWORKS</span>
 
               <div className="footer-delta__legal-links">
-                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>ELECTRONIC INQUIRY DESK</a>
-                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>TRADE COMPLIANCE</a>
-                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>PRIVACY POLICY</a>
-                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>TERMS AND CONDITIONS</a>
-                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>COOKIE POLICY</a>
+                <span>&copy; {new Date().getFullYear()} Cargoworks Logistics</span>
+                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Privacy</a>
+                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Terms</a>
               </div>
 
               <div className="footer-delta__back-to-top">
