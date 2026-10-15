@@ -963,6 +963,15 @@ export default function Home() {
                     key={service.title}
                     className={`service-story__chapter${activeService === index ? " is-active" : ""}`}
                   >
+                    <div className="service-story__mobile-media">
+                      <Image
+                        src={service.image}
+                        alt={service.title}
+                        fill
+                        sizes="(max-width: 600px) 100vw, 1px"
+                      />
+                      <span aria-hidden="true">CW / SERVICE 0{index + 1}</span>
+                    </div>
                     <span className="service-story__number">0{index + 1}</span>
                     <p className="service-story__tag">{service.tag}</p>
                     <h3>{service.title}</h3>

@@ -120,12 +120,6 @@ export const metadata: Metadata = {
     // images: ["/og-image.png"],  // same OG image — uncomment when ready
   },
 
-  /* ── Icons ─────────────────────────────────────────────── */
-  icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    shortcut: "/favicon.svg",
-  },
-
   /* ── Search Console / Webmaster verification ───────────── */
   // PLACEHOLDER: Paste your verification codes here when you connect
   // Google Search Console and Bing Webmaster Tools.
