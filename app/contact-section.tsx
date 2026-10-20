@@ -1,64 +1,69 @@
 "use client";
 
 import { useState } from "react";
+import { CONTACT_EMAIL, WHATSAPP_NUMBER, whatsappLink } from "./contact-config";
 
-const services = ["Ocean freight", "Air freight", "Road transport", "Warehousing", "Customs", "Something else"];
+const services = ["Sea Freight", "Air Freight", "Fleet & Transportation", "Warehousing", "Customs Clearance"];
 
 export default function ContactSection() {
-  const [draftReady, setDraftReady] = useState(false);
-
+  const [draftLink, setDraftLink] = useState<string | null>(null);
+  const directChat = whatsappLink("Hello Cargoworks, I would like to discuss a shipment.");
   return (
-    <section id="contact" className="contact contact-modern" data-scroll-surface="dark" aria-labelledby="contact-title">
-      <div className="container contact-modern__layout">
-        <div className="contact-modern__intro reveal">
-          <p className="contact-modern__eyebrow"><span aria-hidden="true" /> LET’S CONNECT</p>
-          <h2 id="contact-title">Your next move.<br /><span>Our expertise.</span></h2>
-          <p className="contact-modern__description">A single shipment or a whole supply chain. Tell us what you have in mind, and let’s find the right way forward.</p>
-          <a className="contact-modern__email" href="mailto:info@cargoworkslogistics.com">
-            <span><small>Prefer a direct conversation?</small>info@cargoworkslogistics.com</span>
-            <span className="contact-modern__arrow" aria-hidden="true">&#8599;</span>
-          </a>
-          <div className="contact-modern__details">
-            <div><p>BASED IN</p><strong>Kochi, India</strong><span>Connected worldwide.</span></div>
-            <div><p>OFFICE HOURS</p><strong>Monday – Saturday</strong><span>9:00 AM – 6:00 PM IST</span></div>
+    <section id="contact" className="contact-studio" aria-labelledby="contact-title">
+      <div className="container contact-studio__layout">
+        <div className="contact-studio__intro">
+          <p className="contact-studio__eyebrow">LET’S TALK LOGISTICS</p>
+          <h2 id="contact-title">Your next move.<br /><span>Starts here.</span></h2>
+          <p>A single shipment or a whole supply chain. Tell us what you have in mind, and let’s find the right way forward.</p>
+          <div className="contact-studio__channels">
+            {directChat && <a href={directChat} target="_blank" rel="noopener noreferrer"><small>CHAT WITH OUR TEAM</small><span>WhatsApp <i aria-hidden="true">↗</i></span></a>}
+            <a href={`mailto:${CONTACT_EMAIL}`}><small>PREFER EMAIL?</small><span>{CONTACT_EMAIL} <i aria-hidden="true">↗</i></span></a>
           </div>
-          <div className="contact-modern__route" aria-hidden="true"><span>YOUR ORIGIN</span><i /><span>YOUR DESTINATION</span></div>
+          <div className="contact-studio__details">
+            <div><small>OUR BASE</small><p>Kochi, India</p><span>Connected worldwide.</span></div>
+            <div><small>OFFICE HOURS</small><p>Monday – Saturday</p><span>9:00 AM – 6:00 PM IST</span></div>
+          </div>
         </div>
-
-        <div className="inquiry-panel reveal reveal-delay-2">
-          <div className="inquiry-panel__heading"><div><p>LET’S GET STARTED</p><h3>Tell us about your shipment.</h3></div><span aria-hidden="true">&#8599;</span></div>
-          <form className="inquiry-form" onChange={() => setDraftReady(false)} onSubmit={(event) => {
+        <div className="shipment-form-panel">
+          <div className="shipment-form-panel__heading"><span>SHIPMENT ENQUIRY</span><h3>Let’s get you moving.</h3><p>Share a few details to start the conversation.</p></div>
+          <form className="shipment-form" onChange={() => setDraftLink(null)} onSubmit={(event) => {
             event.preventDefault();
             const fields = new FormData(event.currentTarget);
-            const service = String(fields.get("service") || "General inquiry");
-            const body = [
-              `Name: ${fields.get("name")}`,
-              `Email: ${fields.get("email")}`,
-              `Company: ${fields.get("company") || "Not provided"}`,
-              `Phone: ${fields.get("phone") || "Not provided"}`,
-              `Service: ${service}`,
-              "", String(fields.get("message")),
-            ].join("\n");
-            window.location.href = `mailto:info@cargoworkslogistics.com?subject=${encodeURIComponent(`Shipment inquiry · ${service}`)}&body=${encodeURIComponent(body)}`;
-            setDraftReady(true);
+            const value = (key: string) => String(fields.get(key) || "").trim();
+            const message = ["Hello Cargoworks, I’d like a shipment quote.", "",
+              `Service: ${value("service")}`, `Name: ${value("name")}`, `Email: ${value("email")}`,
+              `Company: ${value("company") || "Not provided"}`, `Phone: ${value("phone") || "Not provided"}`,
+              `Origin: ${value("origin")}`, `Destination: ${value("destination")}`, "", `Cargo details: ${value("message")}`].join("\n");
+            const link = whatsappLink(message) || `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Shipment enquiry — ${value("service")}`)}&body=${encodeURIComponent(message)}`;
+            setDraftLink(link);
+            if (WHATSAPP_NUMBER) window.open(link, "_blank", "noopener,noreferrer");
+            else window.location.href = link;
           }}>
-            <fieldset className="inquiry-services">
-              <legend>What can we help you with?</legend>
-              <div>{services.map((service, index) => (
-                <label key={service}><input type="radio" name="service" value={service} defaultChecked={index === 0} /><span>{service}</span></label>
-              ))}</div>
+            <fieldset className="shipment-form__group">
+            <legend><span>01</span> Your details</legend>
+            <div className="shipment-form__row">
+              <label htmlFor="shipment-name"><span className="shipment-form__label">Full name <span aria-hidden="true">*</span></span><input id="shipment-name" name="name" required autoComplete="name" maxLength={100} placeholder="Your name" /></label>
+              <label htmlFor="shipment-email"><span className="shipment-form__label">Email <span aria-hidden="true">*</span></span><input id="shipment-email" name="email" type="email" required autoComplete="email" maxLength={150} placeholder="you@company.com" /></label>
+            </div>
+            <div className="shipment-form__row">
+              <label htmlFor="shipment-company"><span className="shipment-form__label">Company <small>Optional</small></span><input id="shipment-company" name="company" autoComplete="organization" maxLength={100} placeholder="Company name" /></label>
+              <label htmlFor="shipment-phone"><span className="shipment-form__label">Phone <small>Optional</small></span><input id="shipment-phone" name="phone" type="tel" autoComplete="tel" maxLength={40} placeholder="Include country code" /></label>
+            </div>
             </fieldset>
-            <div className="inquiry-form__row">
-              <label htmlFor="f-name">Full name <span>*</span><input id="f-name" name="name" required autoComplete="name" placeholder="Your name" maxLength={100} /></label>
-              <label htmlFor="f-email">Email address <span>*</span><input id="f-email" name="email" type="email" required autoComplete="email" placeholder="you@company.com" maxLength={150} /></label>
+            <fieldset className="shipment-form__group">
+            <legend><span>02</span> Your shipment</legend>
+            <label htmlFor="shipment-service"><span className="shipment-form__label">Service <span aria-hidden="true">*</span></span><select id="shipment-service" name="service" required defaultValue=""><option value="" disabled>Select a service</option>{services.map((service) => <option key={service}>{service}</option>)}</select></label>
+            <div className="shipment-form__row">
+              <label htmlFor="shipment-origin"><span className="shipment-form__label">Origin <span aria-hidden="true">*</span></span><input id="shipment-origin" name="origin" required maxLength={120} placeholder="City or port" /></label>
+              <label htmlFor="shipment-destination"><span className="shipment-form__label">Destination <span aria-hidden="true">*</span></span><input id="shipment-destination" name="destination" required maxLength={120} placeholder="City or port" /></label>
             </div>
-            <div className="inquiry-form__row">
-              <label htmlFor="f-company">Company <small>(optional)</small><input id="f-company" name="company" autoComplete="organization" placeholder="Company name" maxLength={100} /></label>
-              <label htmlFor="f-phone">Phone <small>(optional)</small><input id="f-phone" name="phone" type="tel" autoComplete="tel" placeholder="+91" maxLength={40} /></label>
+            <label htmlFor="shipment-message"><span className="shipment-form__label">Cargo details <span aria-hidden="true">*</span></span><textarea id="shipment-message" name="message" required rows={3} maxLength={1200} placeholder="Cargo type, quantity and preferred shipping date" /></label>
+            </fieldset>
+            <div className="shipment-form__action">
+            <button type="submit">{WHATSAPP_NUMBER ? "Continue on WhatsApp" : "Prepare email enquiry"}<span aria-hidden="true">↗</span></button>
+            <p className="shipment-form__note">* Required fields. {WHATSAPP_NUMBER ? "Review in WhatsApp before sending." : "Review in your email app before sending."}</p>
             </div>
-            <label htmlFor="f-message">What are you moving? <span>*</span><textarea id="f-message" name="message" required rows={3} maxLength={1200} placeholder="Origin, destination, cargo type, and any timelines we should know about." /></label>
-            <div className="inquiry-form__submit"><p>We’ll prepare an email with your details.<br />You can review it before sending.</p><button type="submit">Prepare inquiry <span aria-hidden="true">&#8599;</span></button></div>
-            <p className="inquiry-form__status" role="status">{draftReady ? "Your email draft is ready to open in your email app. If it didn’t open, email info@cargoworkslogistics.com directly. Nothing has been sent yet." : "* Required fields"}</p>
+            <div className="shipment-form__status" role="status">{draftLink && <p className="shipment-form__feedback">Your enquiry is prepared. Nothing has been sent yet. <a href={draftLink} target="_blank" rel="noopener noreferrer">Open {WHATSAPP_NUMBER ? "WhatsApp" : "email draft"} again ↗</a></p>}</div>
           </form>
         </div>
       </div>

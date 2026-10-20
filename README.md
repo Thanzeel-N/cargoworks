@@ -1,5 +1,8 @@
 # Cargoworks
 
+See [Production handoff](docs/production.md) for the current build, deployment,
+domain, and contact-form setup.
+
 > Modern logistics and supply chain management platform connecting global trade routes across India, UAE, the Middle East, Asia, and worldwide.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
@@ -27,7 +30,7 @@
 - **Framework**: [Next.js](https://nextjs.org/) (App Router, Turbopack)
 - **UI Library**: [React 19](https://react.dev/)
 - **Styling**: Vanilla CSS custom design system + [Tailwind CSS v4](https://tailwindcss.com/)
-- **Typography**: Google Fonts via `next/font` (`Oswald`, `Inter`, `JetBrains Mono`)
+- **Typography**: Mukta Mahee, served locally through `next/font`
 - **Motion & Smooth Scroll**: Lenis & Framer Motion
 - **SEO & Metadata**: Next.js 14+ Metadata API, dynamic sitemap, and robots.txt
 
@@ -36,7 +39,7 @@
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18.18+ or 20+
+- Node.js 22 LTS or a newer supported LTS release
 - npm or yarn or pnpm
 
 ### Installation

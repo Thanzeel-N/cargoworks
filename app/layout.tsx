@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Oswald, Inter, JetBrains_Mono } from "next/font/google";
+import { Mukta_Mahee } from "next/font/google";
 import "./globals.css";
 
 /* ─────────────────────────────────────────────────────────────
@@ -7,28 +7,12 @@ import "./globals.css";
    preload: true is the default — only the subsets/weights listed
    will be downloaded, keeping LCP fast.
 ───────────────────────────────────────────────────────────── */
-const oswald = Oswald({
-  variable: "--font-oswald",
+const muktaMahee = Mukta_Mahee({
+  variable: "--font-mukta-mahee",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
   preload: true,
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  display: "swap",
-  preload: true,
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  display: "swap",
-  preload: false, // secondary font — no need to block render
 });
 
 /* ─────────────────────────────────────────────────────────────
@@ -99,25 +83,20 @@ export const metadata: Metadata = {
     locale: "en_IN",
     title: TITLE,
     description: DESC,
-    // PLACEHOLDER: Add a 1200×630 OG image once brand assets are ready.
-    // images: [
-    //   {
-    //     url: "/og-image.png",
-    //     width: 1200,
-    //     height: 630,
-    //     alt: "Cargoworks — Modern Logistics",
-    //   },
-    // ],
+    images: [{
+      url: "/images/hero_bg.webp",
+      width: 1376,
+      height: 768,
+      alt: "Cargoworks global logistics",
+    }],
   },
 
   /* ── Twitter / X Card ──────────────────────────────────── */
   twitter: {
     card: "summary_large_image",
-    site: "@cargoworks",       // PLACEHOLDER: update when handle is confirmed
-    creator: "@cargoworks",
     title: TITLE,
     description: DESC,
-    // images: ["/og-image.png"],  // same OG image — uncomment when ready
+    images: ["/images/hero_bg.webp"],
   },
 
   /* ── Search Console / Webmaster verification ───────────── */
@@ -152,7 +131,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${oswald.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={muktaMahee.variable}
     >
       <body>{children}</body>
     </html>

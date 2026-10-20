@@ -4,17 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Lenis from "lenis";
 import {
+  AnimatePresence,
   motion,
   useInView,
   useMotionValue,
-  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
 } from "framer-motion";
 import ContactSection from "./contact-section";
-
+import { whatsappLink } from "./contact-config";
+import { useScrollExperience } from "./use-scroll-experience";
+import "./scroll-experience.css";
+import "./contact.css";
+import "./why-us.css";
+import "./mobile.css";
 /* ─────────────────────────────────────────────────────────────
    INLINE SVG ICONS
 ───────────────────────────────────────────────────────────── */
@@ -122,54 +127,11 @@ function IconHeart({ size = 24 }: { size?: number }) {
   );
 }
 
-function IconTrendingUp({ size = 24 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" {...svgProps}>
-      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-      <polyline points="17 6 23 6 23 12" />
-    </svg>
-  );
-}
-
 function IconArrowRight({ size = 15 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" {...svgProps} strokeWidth={2}>
       <line x1="5" y1="12" x2="19" y2="12" />
       <polyline points="12 5 19 12 12 19" />
-    </svg>
-  );
-}
-
-function IconFacebook({ size = 18 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-    </svg>
-  );
-}
-
-function IconInstagram({ size = 18 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-    </svg>
-  );
-}
-
-function IconLinkedin({ size = 18 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-    </svg>
-  );
-}
-
-function IconX({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
     </svg>
   );
 }
@@ -180,13 +142,49 @@ function IconX({ size = 16 }: { size?: number }) {
 function CargoworksLogo() {
   return (
     <a href="#" className="navbar__logo" aria-label="Cargoworks home">
-      <span className="navbar__logo-mark" aria-hidden="true">
-        <svg width="42" height="28" viewBox="0 0 100 56" fill="currentColor">
-          <path d="M0 7 6 1 100 9 100 46 97 47 97 12 94 13 94 47 89 48 89 12 80 14 80 49 70 50 70 11 55 14 55 52 40 53 40 8 20 11 20 54 6 56 0 50Z" />
-        </svg>
-      </span>
-      <span className="navbar__wordmark">Cargoworks</span>
+      <Image
+        className="navbar__official-logo"
+        src="/logo/Cargoworks Horizontal.svg"
+        alt="Cargoworks"
+        width={514}
+        height={55}
+        priority
+        unoptimized
+      />
     </a>
+  );
+}
+
+function CargoworksPreloader() {
+  return (
+    <motion.div
+      className="site-preloader"
+      role="status"
+      aria-label="Loading Cargoworks"
+      initial={false}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.18, ease: [0.4, 0, 0.2, 1] } }}
+    >
+      <div className="site-preloader__logo" aria-hidden="true">
+        <span className="site-preloader__mark">
+          <Image
+            src="/logo/Cargoworks Icon.svg"
+            alt=""
+            width={329}
+            height={172}
+            priority
+            unoptimized
+          />
+        </span>
+        <span className="site-preloader__wordmark">
+          {"CARGOWORKS".split("").map((letter, index) => (
+            <span className="site-preloader__char-wrap" key={index}>
+              <i>{letter}</i>
+            </span>
+          ))}
+        </span>
+      </div>
+    </motion.div>
   );
 }
 
@@ -196,7 +194,7 @@ function CargoworksLogo() {
 const SERVICES = [
   {
     icon: <IconGlobe />,
-    title: "Ocean Freight & Sea Logistics",
+    title: "Sea Freight",
     tag: "SEA FREIGHT",
     image: "/images/freight_sea_ship.webp",
     desc: "Global containerized shipping, FCL/LTL cargo movement, intermodal sea-to-rail corridors, and ocean port coordination across major global trade routes.",
@@ -204,7 +202,7 @@ const SERVICES = [
   },
   {
     icon: <IconZap />,
-    title: "Air Freight Express",
+    title: "Air Freight",
     tag: "AIR FREIGHT",
     image: "/images/freight_air_cargo.webp",
     desc: "Time-critical international air cargo forwarding for high-value goods, pharmaceutical temperature-controlled shipments, and urgent express packages.",
@@ -212,7 +210,7 @@ const SERVICES = [
   },
   {
     icon: <IconTruck />,
-    title: "Transportation & Last-Mile Delivery",
+    title: "Fleet & Transportation",
     tag: "LAND FREIGHT",
     image: "/images/freight_trucking.webp",
     desc: "Reliable domestic road freight, dedicated fleet dispatch, full truckload (FTL), less-than-truckload (LTL), and seamless last-mile delivery network.",
@@ -220,7 +218,7 @@ const SERVICES = [
   },
   {
     icon: <IconWarehouse />,
-    title: "Smart Warehousing & Storage",
+    title: "Warehousing",
     tag: "STORAGE & 3PL",
     image: "/images/freight_warehouse.webp",
     desc: "State-of-the-art climate-controlled distribution hubs, inventory management systems, order fulfillment, and long-term secure warehousing.",
@@ -228,29 +226,27 @@ const SERVICES = [
   },
   {
     icon: <IconClipboard />,
-    title: "Customs Clearance & Trade Compliance",
+    title: "Customs Clearance",
     tag: "CUSTOMS & PORT",
     image: "/images/freight_customs.webp",
     desc: "Complete documentation management, import/export clearance, duty calculation, customs brokerage, and port authority coordination.",
     items: ["Customs Documentation & Clearance", "Duty & Tariff Advisory", "Port & Terminal Coordination"],
   },
-  {
-    icon: <IconLayers />,
-    title: "3PL & Integrated Supply Chain",
-    tag: "SUPPLY CHAIN",
-    image: "/images/service_6.webp",
-    desc: "End-to-end supply chain orchestration, multi-modal transport planning, vendor management, and real-time shipment visibility dashboards.",
-    items: ["Multi-Modal Transport Planning", "Supply Chain Optimization", "Real-Time Tracking & Telemetry"],
-  },
 ];
 
 const WHY_ITEMS = [
-  { icon: <IconLayers size={24} />, image: "/images/why-end-to-end.webp", accent: "#cf5a39", title: "End-to-End Logistics", desc: "One partner for freight, transportation, warehousing, and customs clearance." },
-  { icon: <IconZap size={24} />, image: "/images/why-reliable.webp", accent: "#e2a642", title: "Reliable & Efficient", desc: "Timely deliveries and smooth operations you can count on." },
-  { icon: <IconEye size={24} />, image: "/images/why-transparent.webp", accent: "#78a9b8", title: "Transparent Service", desc: "Clear communication, pricing, and real-time shipment visibility." },
-  { icon: <IconCpu size={24} />, image: "/images/why-technology.webp", accent: "#758ca8", title: "Technology-Driven", desc: "Modern tools for better tracking and supply chain management." },
-  { icon: <IconHeart size={24} />, image: "/images/why-customer.webp", accent: "#d3ba83", title: "Customer-Focused", desc: "Dedicated support from pickup to final delivery." },
-  { icon: <IconTrendingUp size={24} />, image: "/images/why-scalable.webp", accent: "#83a687", title: "Scalable Logistics", desc: "Solutions designed to grow alongside your business." },
+  { icon: <IconLayers size={24} />, image: "/images/why-end-to-end-real.webp", accent: "#cf5a39", title: "End-to-End Logistics", desc: "One partner for freight, transportation, warehousing, and customs clearance." },
+  { icon: <IconZap size={24} />, image: "/images/why-reliable-real.webp", accent: "#e2a642", title: "Reliable & Efficient", desc: "Timely deliveries and smooth operations you can count on." },
+  { icon: <IconEye size={24} />, image: "/images/why-transparent-real.webp", accent: "#78a9b8", title: "Transparent Services", desc: "Clear communication, pricing, and real-time shipment visibility." },
+  { icon: <IconHeart size={24} />, image: "/images/why-customer-real.webp", accent: "#d3ba83", title: "Customer-Focused", desc: "Dedicated support from pickup to final delivery." },
+  { icon: <IconCpu size={24} />, image: "/images/why-technology-real.webp", accent: "#758ca8", title: "Technology-Driven", desc: "Modern tools for better tracking and supply chain management." },
+];
+
+const DELIVERY_STEPS = [
+  { code: "01", title: "Request a Quote", desc: "Share your shipment details, cargo requirements, destination, and preferred delivery schedule with our team." },
+  { code: "02", title: "Plan the Shipment", desc: "We determine the most efficient route, transportation method, timeline, and handling requirements for your cargo." },
+  { code: "03", title: "Move and Track", desc: "Your shipment moves through our trusted network with clear updates and real-time visibility throughout transit." },
+  { code: "04", title: "Deliver with Confidence", desc: "We coordinate the final delivery so your shipment arrives safely, securely, and according to schedule." },
 ];
 
 const SECTORS_GRID = [
@@ -318,9 +314,33 @@ const REGIONS = [
 
 const STATS = [
   { value: "2026", label: "Founded" },
-  { value: "6", label: "Core Services" },
+  { value: "5", label: "Core Services" },
   { value: "15+", label: "Regions Served" },
   { value: "10+", label: "Industries Served" },
+];
+
+const SHIPMENT_PATHS = [
+  {
+    code: "01",
+    kicker: "ONE MOVE",
+    title: "I have a shipment to move",
+    desc: "Start with one clear requirement. We help shape the route, mode, documentation, pickup, and delivery around your cargo and timeline.",
+    action: "Plan one shipment",
+  },
+  {
+    code: "02",
+    kicker: "RECURRING FLOW",
+    title: "I need a reliable trade lane",
+    desc: "Build a repeatable freight program for regular volumes, with coordinated handoffs, shipment visibility, and support across each movement.",
+    action: "Discuss a recurring lane",
+  },
+  {
+    code: "03",
+    kicker: "CONNECTED OPERATION",
+    title: "I need end-to-end logistics",
+    desc: "Connect freight, customs, transport, warehousing, and fulfillment into one scalable operating plan shaped around your supply chain.",
+    action: "Design my logistics plan",
+  },
 ];
 
 /* ─────────────────────────────────────────────────────────────
@@ -415,12 +435,6 @@ function useScrollWords(paused: boolean) {
   }, [paused]);
 }
 
-function ScrollWords({ children }: { children: string }) {
-  return <span className="scroll-copy">{children.split(" ").map((word, index) => (
-    <span key={index}><span className="scroll-word">{word}</span>{" "}</span>
-  ))}</span>;
-}
-
 function AnimatedStat({ value, label }: { value: string; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.7 });
@@ -455,74 +469,20 @@ function AnimatedStat({ value, label }: { value: string; label: string }) {
 }
 
 function CoverageRoute() {
-  const routeRef = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
-  const [truckRotation, setTruckRotation] = useState(0);
-  const { scrollYProgress } = useScroll({
-    target: routeRef,
-    offset: ["start 88%", "end 12%"],
-  });
-  const truckY = useTransform(
-    scrollYProgress,
-    [0, 0.12, 0.88, 1],
-    ["-58vh", "0vh", "0vh", "58vh"],
-  );
-  const truckOpacity = useTransform(
-    scrollYProgress,
-    (progress) => (progress >= 0.07 && progress <= 0.93 ? 1 : 0),
-  );
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const previous = scrollYProgress.getPrevious();
-    if (previous === undefined) return;
-
-    if (latest < previous && latest >= 0.93) {
-      setTruckRotation((current) => (current === 180 ? current : 180));
-    } else if (latest > previous && latest <= 0.07) {
-      setTruckRotation((current) => (current === 0 ? current : 0));
-    }
-  });
-
   return (
-    <div ref={routeRef} className="coverage-route">
-      <div className="coverage-route__stage" aria-hidden="true">
-        <div className="coverage-route__truck-anchor">
-          <motion.div
-            className="coverage-truck"
-            animate={{ rotate: truckRotation }}
-            transition={{
-              rotate: reduceMotion
-                ? { duration: 0 }
-                : { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
-            }}
-            style={{
-              y: reduceMotion ? 0 : truckY,
-              opacity: truckOpacity,
-            }}
-          >
-            <Image
-              src="/images/top-view-container-truck-v2.webp"
-              alt=""
-              width={1024}
-              height={1536}
-              sizes="(max-width: 700px) 34vw, 15vw"
-            />
+    <div className="coverage-route" role="img" aria-label="Stylized world map showing Cargoworks coverage across India, the Gulf, Asia, Europe, and North America">
+      <Image
+        className="coverage-map coverage-map--accurate"
+        src="/images/world-network-map.svg"
+        alt=""
+        width={1440}
+        height={560}
+        sizes="100vw"
+        unoptimized
+      />
 
-          </motion.div>
-        </div>
-      </div>
-
-      <div className="coverage-country-list reveal reveal-delay-2">
-        {REGIONS.map((region, index) => (
-          <article key={region.name} className="coverage-country-row">
-            <div className="coverage-country-row__primary">
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <h3>{region.name}</h3>
-            </div>
-            <div className="coverage-country-row__lane" aria-hidden="true" />
-            <p>{region.desc}</p>
-          </article>
-        ))}
+      <div className="coverage-route__legend" aria-hidden="true">
+        {REGIONS.slice(0, 10).map((region) => <span key={region.name}>{region.name}</span>)}
       </div>
     </div>
   );
@@ -566,74 +526,57 @@ function SwingingContainer() {
   );
 }
 
-function WhyCarousel() {
-  const [active, setActive] = useState(0);
-  const total = WHY_ITEMS.length;
-  const select = (next: number) => setActive((next + total) % total);
-  const relativeIndex = (index: number) => {
-    let offset = index - active;
-    if (offset > total / 2) offset -= total;
-    if (offset < -total / 2) offset += total;
-    return offset;
-  };
+function WhyFeatureGrid() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const lead = WHY_ITEMS[activeIndex];
+  const supporting = WHY_ITEMS
+    .map((item, index) => ({ item, index }))
+    .filter(({ index }) => index !== activeIndex);
 
   return (
-    <div className="why-carousel reveal" aria-roledescription="carousel" aria-label="Why choose Cargoworks">
-      <motion.div
-        className="why-carousel__stage"
-        drag="x"
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.16}
-        onDragEnd={(_, info) => {
-          if (info.offset.x < -55) select(active + 1);
-          if (info.offset.x > 55) select(active - 1);
-        }}
+    <div className="container why-showcase" aria-label="Why choose Cargoworks">
+      <motion.article
+        key={lead.title}
+        layoutId={`why-feature-${activeIndex}`}
+        className="why-showcase__lead"
+        initial={{ opacity: 0, scale: 0.985 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
       >
-        {WHY_ITEMS.map((item, index) => {
-          const offset = relativeIndex(index);
-          const distance = Math.abs(offset);
-          const visible = distance <= 2;
+        <Image src={lead.image} alt="" fill sizes="(max-width: 900px) 100vw, 52vw" />
+        <div className="why-showcase__lead-shade" aria-hidden="true" />
+        <div className="why-showcase__lead-top">
+          <span>{String(activeIndex + 1).padStart(2, "0")} / Core advantage</span>
+          <span className="why-showcase__icon" aria-hidden="true">{lead.icon}</span>
+        </div>
+        <div className="why-showcase__lead-copy">
+          <h3>{lead.title}</h3>
+          <p>{lead.desc}</p>
+        </div>
+      </motion.article>
 
-          return (
-            <button
-              type="button"
-              key={item.title}
-              className={`why-carousel__card${offset === 0 ? " is-active" : ""}`}
-              style={{
-                "--why-x": `${offset * 73}%`,
-                "--why-y": `${distance * 42}px`,
-                "--why-rotate": `${offset * 6}deg`,
-                "--why-scale": offset === 0 ? "1" : distance === 1 ? "0.79" : "0.67",
-                "--why-opacity": visible ? (offset === 0 ? "1" : distance === 1 ? "0.64" : "0.25") : "0",
-                "--why-accent": item.accent,
-                zIndex: 10 - distance,
-                pointerEvents: visible ? "auto" : "none",
-              } as React.CSSProperties}
-              onClick={() => select(index)}
-              aria-label={`Show ${item.title}`}
-              aria-current={offset === 0 ? "true" : undefined}
-            >
-              <Image src={item.image} alt="" fill sizes="(max-width: 700px) 76vw, 28vw" />
-              <span className="why-carousel__shade" />
-              <span className="why-carousel__topline">
-                <span className="why-carousel__icon" aria-hidden="true">{item.icon}</span>
-                <small>{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</small>
-              </span>
-              <span className="why-carousel__meta">
-                <strong>{item.title}</strong>
-                <span>{item.desc}</span>
-              </span>
-            </button>
-          );
-        })}
-      </motion.div>
-
-      <div className="why-carousel__controls">
-        <button type="button" onClick={() => select(active - 1)} aria-label="Previous advantage">&larr;</button>
-        <span>{String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
-        <button type="button" onClick={() => select(active + 1)} aria-label="Next advantage">&rarr;</button>
+      <div className="why-showcase__grid">
+        {supporting.map(({ item, index }) => (
+          <motion.button
+            type="button"
+            layoutId={`why-feature-${index}`}
+            className="why-showcase__card"
+            key={item.title}
+            style={{ borderTopColor: item.accent }}
+            onClick={() => setActiveIndex(index)}
+            aria-label={`Show ${item.title}`}
+            whileTap={{ scale: 0.98 }}
+          >
+            <div className="why-showcase__card-top">
+              <span className="why-showcase__number">{String(index + 1).padStart(2, "0")}</span>
+              <span className="why-showcase__icon" aria-hidden="true">{item.icon}</span>
+            </div>
+            <h3>{item.title}</h3>
+            <p>{item.desc}</p>
+            <span className="why-showcase__action" aria-hidden="true">View feature <i>↗</i></span>
+          </motion.button>
+        ))}
       </div>
-      <p className="why-carousel__hint">Drag the cards to explore</p>
     </div>
   );
 }
@@ -642,18 +585,64 @@ function WhyCarousel() {
    PAGE
 ───────────────────────────────────────────────────────────── */
 export default function Home() {
+  const footerChat = whatsappLink("Hello Cargoworks, I would like to discuss a shipment.");
   const scrolled = useNavScrolled();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const desktopServicesRef = useRef<HTMLDetailsElement>(null);
+
+  useEffect(() => {
+    const dismiss = (event: PointerEvent) => {
+      if (!desktopServicesRef.current?.contains(event.target as Node)) {
+        desktopServicesRef.current?.removeAttribute("open");
+      }
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && desktopServicesRef.current?.open) {
+        desktopServicesRef.current.removeAttribute("open");
+        desktopServicesRef.current.querySelector("summary")?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", dismiss);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", dismiss);
+      document.removeEventListener("keydown", escape);
+    };
+  }, []);
   const [motionPaused, setMotionPaused] = useState(false);
-  const [activeService, setActiveService] = useState(0);
+  const [preloaderVisible, setPreloaderVisible] = useState(true);
 
   const reduceMotion = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
-  const serviceChaptersRef = useRef<HTMLDivElement>(null);
 
   useSmoothScroll(motionPaused, reduceMotion);
   useScrollReveal();
   useScrollWords(motionPaused);
+  useScrollExperience(motionPaused);
+
+  useEffect(() => {
+    const startedAt = performance.now();
+    let timer = 0;
+    document.documentElement.classList.add("preloader-active");
+
+    const finish = () => {
+      const remaining = Math.max(0, 2050 - (performance.now() - startedAt));
+      timer = window.setTimeout(() => {
+        document.documentElement.classList.remove("preloader-active");
+        setPreloaderVisible(false);
+      }, remaining);
+    };
+
+    if (document.readyState === "complete") finish();
+    else window.addEventListener("load", finish, { once: true });
+
+    return () => {
+      window.removeEventListener("load", finish);
+      window.clearTimeout(timer);
+      document.documentElement.classList.remove("preloader-active");
+    };
+  }, []);
 
   const { scrollYProgress: heroProgress } = useScroll({
     target: heroRef,
@@ -662,19 +651,6 @@ export default function Home() {
   const heroContentYRaw = useTransform(heroProgress, [0, 1], [0, -76]);
   const heroContentOpacity = useTransform(heroProgress, [0, 0.72, 1], [1, 0.96, 0]);
   const heroContentY = useSpring(heroContentYRaw, { stiffness: 110, damping: 28 });
-  const { scrollYProgress: serviceProgress } = useScroll({
-    target: serviceChaptersRef,
-    offset: ["start center", "end center"],
-  });
-
-  useMotionValueEvent(serviceProgress, "change", (latest) => {
-    const nextService = Math.max(
-      0,
-      Math.min(SERVICES.length - 1, Math.floor(latest * SERVICES.length)),
-    );
-    setActiveService((current) => current === nextService ? current : nextService);
-  });
-
   useEffect(() => {
     if (!mobileOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -683,7 +659,23 @@ export default function Home() {
       setMobileOpen(false);
       document.getElementById("mobile-menu-toggle")?.focus();
     };
-    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") close(); };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+      if (event.key !== "Tab") return;
+      const controls = [
+        document.getElementById("mobile-menu-toggle"),
+        ...document.querySelectorAll<HTMLElement>("#mobile-navigation a, #mobile-navigation button"),
+      ].filter((node): node is HTMLElement => !!node && node.getClientRects().length > 0);
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
     const onResize = () => { if (window.innerWidth > 900) close(); };
     window.addEventListener("keydown", onKey);
     window.addEventListener("resize", onResize);
@@ -697,6 +689,8 @@ export default function Home() {
   function smoothTo(e: React.MouseEvent<HTMLAnchorElement>, id: string) {
     e.preventDefault();
     setMobileOpen(false);
+    setMobileServicesOpen(false);
+    desktopServicesRef.current?.removeAttribute("open");
     const el = document.getElementById(id);
     if (el) {
       const chapterLead = el.hasAttribute("data-scroll-surface")
@@ -711,6 +705,10 @@ export default function Home() {
 
   return (
     <>
+      <AnimatePresence>
+        {preloaderVisible && <CargoworksPreloader />}
+      </AnimatePresence>
+
       {/* ══ NAVBAR ════════════════════════════════════════════ */}
       <header className={`navbar${scrolled ? " scrolled" : ""}`} role="banner">
         <div className="container navbar__inner">
@@ -718,8 +716,22 @@ export default function Home() {
 
           <nav aria-label="Primary">
             <ul className="navbar__links">
+              <li className="nav-dropdown">
+                <details ref={desktopServicesRef}>
+                  <summary>Services <svg className="services-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></summary>
+                  <div className="nav-dropdown__menu">
+                    <div className="services-menu-heading">Built for every move</div>
+                    {SERVICES.slice(0, 5).map((service, index) => (
+                      <a key={service.title} href={`#service-${index + 1}`} onClick={(e) => smoothTo(e, `service-${index + 1}`)}>
+                        <span className="services-menu-icon" aria-hidden="true">{service.icon}</span>
+                        <span className="services-menu-copy"><strong>{service.title}</strong><small>{service.items[1]}</small></span>
+                        <IconArrowRight size={16} />
+                      </a>
+                    ))}
+                  </div>
+                </details>
+              </li>
               {[
-                { href: "services", label: "Services" },
                 { href: "industries", label: "Industries" },
                 { href: "why-us", label: "Why Us" },
                 { href: "about", label: "About" },
@@ -751,9 +763,23 @@ export default function Home() {
       </header>
 
       {/* ══ MOBILE MENU ═══════════════════════════════════════ */}
-      <nav id="mobile-navigation" className={`mobile-menu${mobileOpen ? " open" : ""}`} aria-label="Mobile">
+      <nav id="mobile-navigation" className={`mobile-menu${mobileOpen ? " open" : ""}`} aria-label="Mobile" inert={!mobileOpen} data-lenis-prevent>
+        <div className="mobile-services">
+          <button type="button" className="mobile-services__toggle"
+            aria-expanded={mobileServicesOpen} aria-controls="mobile-services-list"
+            onClick={() => setMobileServicesOpen((open) => !open)}>
+            Services <svg className="services-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </button>
+          <div id="mobile-services-list" className="mobile-services__list" hidden={!mobileServicesOpen}>
+            <a href="#services" onClick={(e) => smoothTo(e, "services")}>Explore all services <IconArrowRight size={16} /></a>
+            {SERVICES.slice(0, 5).map((service, index) => (
+              <a key={service.title} href={`#service-${index + 1}`} onClick={(e) => smoothTo(e, `service-${index + 1}`)}>
+                <span className="services-menu-icon" aria-hidden="true">{service.icon}</span><span>{service.title}</span><IconArrowRight size={16} />
+              </a>
+            ))}
+          </div>
+        </div>
         {[
-          { href: "services", label: "Services" },
           { href: "industries", label: "Industries" },
           { href: "why-us", label: "Why Us" },
           { href: "about", label: "About" },
@@ -870,29 +896,18 @@ export default function Home() {
         <section id="about" className="about-section" data-scroll-surface="sand" aria-label="About Cargoworks">
           <div className="container">
 
-            {/* Description */}
             <div className="about__top">
-              <div className="about__visual" tabIndex={0} role="img" aria-label="Container yard with an interactive folded pattern. Move over the image to reveal individual pieces, or focus to reveal the whole pattern.">
-                <div className="about__pattern" aria-hidden="true">
-                  {Array.from({ length: 5 }, (_, row) => (
-                    <div className="brand-pattern__row" key={row}>
-                      {Array.from({ length: 7 }, (_, column) => <span key={column} />)}
-                    </div>
-                  ))}
-                </div>
-                <div className="about__visual-caption" aria-hidden="true"><span>CARGOWORKS / IN MOTION</span><span>SEA · LAND · AIR</span></div>
-              </div>
               <div className="about__right">
                 <div className="about__tag">About Cargoworks</div>
                 <h2 className="about__title">
-                  <ScrollWords>Modern Logistics for a Connected World</ScrollWords>
+                  Modern Logistics for a Connected World
                 </h2>
                 <div className="about__established">Est. 2026 &nbsp;·&nbsp; Kochi, India</div>
                 <p className="about__text">
-                  <ScrollWords>Cargoworks is a modern logistics and supply chain company focused on making cargo movement simpler, faster, and more reliable. We provide flexible logistics solutions covering transportation, freight, warehousing, and end-to-end supply chain support.</ScrollWords>
+                  Cargoworks is a modern logistics and supply chain company focused on making cargo movement simpler, faster, and more reliable. We provide flexible logistics solutions covering transportation, freight, warehousing, and end-to-end supply chain support.
                 </p>
                 <p className="about__text">
-                  <ScrollWords>Our goal is to combine technology, efficiency, and customer-focused service to help businesses move their goods seamlessly and grow with confidence.</ScrollWords>
+                  Our goal is to combine technology, efficiency, and customer-focused service to help businesses move their goods seamlessly and grow with confidence.
                 </p>
               </div>
             </div>
@@ -908,6 +923,28 @@ export default function Home() {
         </section>
 
         {/* ══ SERVICES (Horizontal Rows with Spiral Image Pop-up) ══ */}
+        <section id="solutions" className="shipment-paths" data-scroll-surface="sand" aria-labelledby="shipment-paths-title">
+          <div className="container">
+            <div className="shipment-paths__header reveal">
+              <div>
+                <div className="label-line">Built around your operation</div>
+              <h2 id="shipment-paths-title" className="section-title">Start where you are. Scale when you are ready.</h2>
+              </div>
+              <p className="section-desc">From one urgent movement to a connected logistics program, choose the level of support your business needs today.</p>
+            </div>
+            <div className="shipment-paths__grid">
+              {SHIPMENT_PATHS.map((path, index) => (
+                <article key={path.code} className={`shipment-path reveal reveal-delay-${index + 1}`}>
+                  <div className="shipment-path__meta"><span>{path.code}</span><small>{path.kicker}</small></div>
+                  <h3>{path.title}</h3>
+                  <p>{path.desc}</p>
+                  <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>{path.action} <IconArrowRight /></a>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section id="services" className="services" data-scroll-surface="dark">
           <div className="container">
             <div className="services__header reveal">
@@ -922,69 +959,37 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="service-story">
-              <div className="service-story__media" aria-live="polite">
-                <div className="service-story__frame">
-                  {SERVICES.map((service, index) => {
-                    const isActive = activeService === index;
-                    return (
-                    <motion.div
-                      key={service.image}
-                      className="service-story__image"
-                      initial={false}
-                      animate={{ opacity: isActive ? 1 : 0, scale: isActive ? 1 : 1.025 }}
-                      transition={{ duration: reduceMotion ? 0 : 0.2, ease: "easeOut" }}
-                      style={{ zIndex: isActive ? 2 : 1 }}
-                      aria-hidden={!isActive}
-                    >
-                      <Image
-                        src={service.image}
-                        alt={isActive ? service.title : ""}
-                        fill
-                        sizes="(max-width: 900px) 100vw, 48vw"
-                        loading="eager"
-                      />
-                    </motion.div>
-                    );
-                  })}
-                  <div className="service-story__frame-ui" aria-hidden="true">
-                    <span>CW / SERVICE 0{activeService + 1}</span>
-                    <span>{SERVICES[activeService].tag}</span>
-                  </div>
-                  <div className="service-story__progress" aria-hidden="true">
-                    <span style={{ transform: `scaleX(${(activeService + 1) / SERVICES.length})` }} />
-                  </div>
-                </div>
-              </div>
-
-              <div ref={serviceChaptersRef} className="service-story__chapters">
-                {SERVICES.map((service, index) => (
-                  <motion.article
-                    key={service.title}
-                    className={`service-story__chapter${activeService === index ? " is-active" : ""}`}
-                  >
-                    <div className="service-story__mobile-media">
-                      <Image
-                        src={service.image}
-                        alt={service.title}
-                        fill
-                        sizes="(max-width: 600px) 100vw, 1px"
-                      />
-                      <span aria-hidden="true">CW / SERVICE 0{index + 1}</span>
+            <div className="services-grid services-list">
+              {SERVICES.slice(0, 5).map((service, index) => (
+                <motion.article
+                  id={`service-${index + 1}`}
+                  key={service.title}
+                  className={`service-card reveal reveal-delay-${(index % 3) + 1}`}
+                >
+                  <div className="service-card__content">
+                    <div className="service-card__meta">
+                      <span>0{index + 1}</span>
+                      <small>{service.tag}</small>
                     </div>
-                    <span className="service-story__number">0{index + 1}</span>
-                    <p className="service-story__tag">{service.tag}</p>
                     <h3>{service.title}</h3>
                     <p>{service.desc}</p>
-                    <ul>
-                      {service.items.map((item) => <li key={item}>{item}</li>)}
-                    </ul>
+                  </div>
+                  <div className="service-card__image">
+                    <Image
+                      src={service.image}
+                      alt={service.title}
+                      fill
+                      sizes="(max-width: 700px) 100vw, (max-width: 1050px) 50vw, 33vw"
+                    />
+                  </div>
+                  <div className="service-card__footer">
+                    <ul>{service.items.map((item) => <li key={item}>{item}</li>)}</ul>
                     <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>
                       Plan this route <IconArrowRight />
                     </a>
-                  </motion.article>
-                ))}
-              </div>
+                  </div>
+                </motion.article>
+              ))}
             </div>
           </div>
         </section>
@@ -996,32 +1001,27 @@ export default function Home() {
               <div className="label-line why__eyebrow">
                 Our Edge
               </div>
-              <h2 className="why__statement">
-                <span>Why choose.</span>
-                <span>Cargoworks.</span>
-              </h2>
+              <h2 className="why__statement">Why Choose Cargoworks?</h2>
               <p className="why__intro-copy">
-                Six practical advantages. One logistics partner built to keep every shipment visible, reliable, and ready to scale.
+                Five practical advantages. One logistics partner built to keep every shipment visible, reliable, and ready to move.
               </p>
             </div>
           </div>
-          <WhyCarousel />
+          <WhyFeatureGrid />
         </section>
 
         {/* ══ INDUSTRIES & AREAS ════════════════════════════════ */}
         <section id="industries" className="industries" data-scroll-surface="dark">
           {/* Header */}
           <div className="container">
-            <div className="reveal" style={{ marginBottom: "2.5rem" }}>
+            <div className="industries__header" style={{ marginBottom: "2.5rem" }}>
               <div className="label-line" style={{ marginBottom: "0.875rem" }}>
                 Sectors & Verticals
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1.5rem" }}>
-                <h2 className="section-title">Industries Served</h2>
-                <p className="section-desc">
-                  Tailored logistics engineered for diverse industry demands and global supply chains.
-                </p>
-              </div>
+              <h2 className="section-title">Industries Served</h2>
+              <p className="section-desc">
+                Tailored logistics engineered for diverse industry demands and global supply chains.
+              </p>
             </div>
           </div>
 
@@ -1063,49 +1063,53 @@ export default function Home() {
           </div>
 
           {/* Coverage / Areas Served */}
-          <div className="container" style={{ marginTop: "clamp(4.5rem, 8vw, 7rem)" }}>
-            <div className="reveal" style={{ marginBottom: "2rem" }}>
-              <div className="label-line" style={{ marginBottom: "0.875rem" }}>
-                Coverage
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1.5rem" }}>
-                <h2 className="section-title" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)" }}>
-                  Areas Served
-                </h2>
+          <div className="coverage-network">
+            <div className="container coverage-network__header reveal">
+              <div className="label-line">Global Network</div>
+              <div className="coverage-network__statement">
+                <h2 className="section-title">We move across borders, so your business can move forward.</h2>
                 <p className="section-desc">
-                  Connecting businesses across key domestic corridors, Gulf hubs, and international trade routes.
+                  One connected network serving 15+ regions across India, the Gulf, Asia, Europe, and North America—by ocean, air, and road.
                 </p>
               </div>
             </div>
-
             <CoverageRoute />
           </div>
         </section>
 
         {/* ══ MISSION & VISION ══════════════════════════════════ */}
-        <section id="mission" className="mission" data-scroll-surface="rust" aria-label="Mission and Vision">
+        <section id="mission" className="mission delivery-process" data-scroll-surface="rust" aria-labelledby="delivery-title">
           <div className="container">
-            <div className="mission__grid">
-              <div className="mission-block reveal">
-                <div className="mission-block__tag">Mission</div>
-                <h2 className="mission-block__title">Our Mission</h2>
-                <p className="mission-block__text">
-                  To simplify logistics through reliable, efficient, and technology-driven
-                  solutions that help businesses move goods seamlessly, reduce complexity,
-                  and grow with confidence.
-                </p>
+            <div className="delivery-process__layout">
+              <div className="delivery-process__content">
+                <div className="delivery-process__header reveal">
+                  <div className="label-line">How we deliver</div>
+                  <h2 id="delivery-title" className="section-title">A simple process. Every step covered.</h2>
+                  <p className="section-desc">A simple, coordinated process that keeps every movement clear from the first conversation to final delivery.</p>
+                  <a className="delivery-process__cta" href="#contact" onClick={(e) => smoothTo(e, "contact")}>
+                    Start shipping <IconArrowRight />
+                  </a>
+                </div>
+                <div className="delivery-process__steps">
+                  {DELIVERY_STEPS.map((step, index) => (
+                    <article className={`delivery-step reveal reveal-delay-${index + 1}`} key={step.code}>
+                      <span className="delivery-step__number">[{step.code}]</span>
+                      <div>
+                        <h3>{step.title}</h3>
+                        <p>{step.desc}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               </div>
 
-              <div className="mission__divider" aria-hidden="true" />
-
-              <div className="mission-block reveal reveal-delay-2">
-                <div className="mission-block__tag">Vision</div>
-                <h2 className="mission-block__title">Our Vision</h2>
-                <p className="mission-block__text">
-                  To build a trusted, technology-enabled logistics network that connects
-                  businesses globally and sets a new standard for seamless, transparent,
-                  and scalable supply chain solutions.
-                </p>
+              <div className="delivery-process__visual reveal reveal-delay-2">
+                <Image src="/images/delivery-terminal-aerial.webp" alt="Top-down view of a freight truck moving through a container terminal" fill sizes="(max-width: 1050px) 100vw, 48vw" />
+                <div className="delivery-process__visual-shade" aria-hidden="true" />
+                <div className="delivery-process__metrics">
+                  <div><strong>5</strong><span>Core logistics services</span></div>
+                  <div><strong>15+</strong><span>Regions served</span></div>
+                </div>
               </div>
             </div>
           </div>
@@ -1117,166 +1121,42 @@ export default function Home() {
 
       {/* ══ FOOTER (DELTA CAFÉS EDITORIAL STYLE) ═══════════════ */}
       <footer className="footer-minimal" role="contentinfo">
-        <div className="footer-minimal__image" aria-hidden="true" />
-        <div className="footer-minimal__shade" aria-hidden="true" />
 
         <div className="container footer-minimal__inner">
           <div className="footer-minimal__main">
             <div className="footer-minimal__message">
-              <span className="footer-minimal__eyebrow">Kochi / India / Worldwide</span>
-              <h2>Built to move.<br /><span>Ready for everywhere.</span></h2>
+              <span className="footer-minimal__eyebrow">LET&apos;S START SHIPPING</span>
+              <h2>Moving cargo.<br /><span>Building momentum.</span></h2>
+              <a href="#contact" className="footer-minimal__start" onClick={(e) => smoothTo(e, "contact")}>
+                <span aria-hidden="true">■</span> Contact our team
+              </a>
             </div>
 
-            <div className="footer-minimal__contact">
-              <p>Have cargo ready to move?</p>
-              <a href="mailto:info@cargoworkslogistics.com" className="footer-minimal__email">
-                info@cargoworkslogistics.com
-              </a>
-              <a href="#contact" className="btn btn-primary btn-lg"
-                onClick={(e) => smoothTo(e, "contact")}>
-                Start a shipment <IconArrowRight />
-              </a>
+            <div className="footer-minimal__company">
+              <span className="footer-minimal__label">Company</span>
+              <nav className="footer-minimal__nav" aria-label="Footer navigation">
+                <a href="#about" onClick={(e) => smoothTo(e, "about")}>About</a>
+                <a href="#services" onClick={(e) => smoothTo(e, "services")}>Services</a>
+                <a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Industries</a>
+                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Contact</a>
+              </nav>
             </div>
           </div>
 
           <div className="footer-minimal__bar">
-            <a href="#hero" className="footer-minimal__brand" onClick={(e) => smoothTo(e, "hero")}>
-              <svg width="45" height="28" viewBox="0 0 100 56" fill="currentColor" aria-hidden="true">
-                <path d="M0 7 6 1 100 9 100 46 97 47 97 12 94 13 94 47 89 48 89 12 80 14 80 49 70 50 70 11 55 14 55 52 40 53 40 8 20 11 20 54 6 56 0 50Z" />
-              </svg>
-              <span>Cargoworks</span>
-            </a>
-
-            <nav className="footer-minimal__nav" aria-label="Footer navigation">
-              <a href="#about" onClick={(e) => smoothTo(e, "about")}>About</a>
-              <a href="#services" onClick={(e) => smoothTo(e, "services")}>Services</a>
-              <a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Coverage</a>
-              <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Contact</a>
-            </nav>
-
-            <div className="footer-minimal__socials" aria-label="Social media channels">
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><IconLinkedin /></a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><IconInstagram /></a>
-              <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="X"><IconX /></a>
-            </div>
+            <div className="footer-minimal__links"><span>Support</span><a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Contact</a><a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Shipment enquiry</a></div>
+            <div className="footer-minimal__links"><span>Explore</span><a href="#about" onClick={(e) => smoothTo(e, "about")}>About us</a><a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Our edge</a></div>
+            <div className="footer-minimal__links"><span>Solutions</span><a href="#services" onClick={(e) => smoothTo(e, "services")}>Services</a><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Industries</a></div>
+            <div className="footer-minimal__direct"><span>Email</span><a href="mailto:info@cargoworkslogistics.com">info@cargoworkslogistics.com</a>{footerChat && <><span>WhatsApp</span><a href={footerChat} target="_blank" rel="noopener noreferrer">Chat with our team ↗</a></>}</div>
           </div>
 
+          <a href="#hero" className="footer-minimal__wordmark" onClick={(e) => smoothTo(e, "hero")}>CARGOWORKS</a>
           <div className="footer-minimal__legal">
-            <span>&copy; {new Date().getFullYear()} Cargoworks Logistics</span>
-            <span>Global logistics / Kochi HQ</span>
-            <a href="#hero" onClick={(e) => smoothTo(e, "hero")}>Back to top &uarr;</a>
+            <span>Cargoworks Logistics. Copyright &copy; {new Date().getFullYear()}. All rights reserved.</span>
+            <a href="#hero" onClick={(e) => smoothTo(e, "hero")}>Back to top ↑</a>
           </div>
         </div>
 
-        <div className="footer-minimal__legacy" hidden aria-hidden="true">
-          <div className="footer-delta__wrapper">
-            <div className="footer-delta__grid">
-              {/* 1. Left Brand & Socials Column */}
-              <div className="footer-delta__col-brand">
-                <div className="footer-delta__emblem">
-                  <span className="footer-delta__emblem-mark" aria-hidden="true">
-                    <svg width="68" height="42" viewBox="0 0 100 56" fill="currentColor">
-                      <path d="M0 7 6 1 100 9 100 46 97 47 97 12 94 13 94 47 89 48 89 12 80 14 80 49 70 50 70 11 55 14 55 52 40 53 40 8 20 11 20 54 6 56 0 50Z" />
-                    </svg>
-                  </span>
-                  <span className="footer-delta__emblem-name">CARGOWORKS</span>
-                </div>
-
-                <div className="footer-delta__socials" aria-label="Social media channels">
-                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="footer-delta__social-btn" aria-label="LinkedIn">
-                    <IconLinkedin />
-                  </a>
-                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="footer-delta__social-btn" aria-label="Instagram">
-                    <IconInstagram />
-                  </a>
-                  <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="footer-delta__social-btn" aria-label="X (Twitter)">
-                    <IconX />
-                  </a>
-                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="footer-delta__social-btn" aria-label="Facebook">
-                    <IconFacebook />
-                  </a>
-                </div>
-              </div>
-
-              {/* Company */}
-              <div className="footer-delta__col-nav">
-                <h4 className="footer-delta__col-title">Company</h4>
-                <ul className="footer-delta__links">
-                  <li><a href="#about" onClick={(e) => smoothTo(e, "about")}>About Us</a></li>
-                  <li><a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Why Cargoworks</a></li>
-                  <li><a href="#mission" onClick={(e) => smoothTo(e, "mission")}>Mission & Vision</a></li>
-                  <li><a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Contact</a></li>
-                </ul>
-              </div>
-
-              {/* Coverage */}
-              <div className="footer-delta__col-nav">
-                <h4 className="footer-delta__col-title">Coverage</h4>
-                <ul className="footer-delta__links">
-                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>India Network</a></li>
-                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Gulf & Middle East</a></li>
-                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Asia-Pacific</a></li>
-                  <li><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Global Trade Routes</a></li>
-                </ul>
-              </div>
-
-              {/* Solutions */}
-              <div className="footer-delta__col-nav">
-                <h4 className="footer-delta__col-title">Solutions</h4>
-                <ul className="footer-delta__links">
-                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Sea & Air Freight</a></li>
-                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Road & Last-Mile</a></li>
-                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Warehousing</a></li>
-                  <li><a href="#services" onClick={(e) => smoothTo(e, "services")}>Customs & 3PL</a></li>
-                </ul>
-              </div>
-
-              {/* 5. Column 4: CONTACT & SUPPORT */}
-              <div className="footer-delta__col-contact">
-                <div className="footer-delta__contact-item">
-                  <span className="footer-delta__contact-label">EMAIL</span>
-                  <a href="mailto:info@cargoworkslogistics.com" className="footer-delta__contact-email">
-                    info@cargoworkslogistics.com
-                  </a>
-                </div>
-
-                <div className="footer-delta__contact-item">
-                  <span className="footer-delta__contact-label">CUSTOMER SUPPORT</span>
-                  <a href="tel:+914842900000" className="footer-delta__contact-phone">
-                    +91 484 290 0000*
-                  </a>
-                </div>
-
-                <div className="footer-delta__contact-item">
-                  <span className="footer-delta__contact-label">OPERATIONS & DISPATCH</span>
-                  <a href="tel:+919895000000" className="footer-delta__contact-phone">
-                    +91 9895 000 000*
-                  </a>
-                  <p className="footer-delta__contact-footnote">
-                    *available Mon–Sat 9:00 AM – 6:00 PM IST · Kochi HQ & Gulf Hubs
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Bar: Copyright, Legal Links, Back to Top */}
-            <div className="footer-delta__bottom">
-              <span className="footer-delta__brand-id">CARGOWORKS</span>
-
-              <div className="footer-delta__legal-links">
-                <span>&copy; {new Date().getFullYear()} Cargoworks Logistics</span>
-                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Privacy</a>
-                <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Terms</a>
-              </div>
-
-              <div className="footer-delta__back-to-top">
-                <a href="#hero" onClick={(e) => smoothTo(e, "hero")}>
-                  BACK TO TOP <span aria-hidden="true">&uarr;</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
       </footer>
     </>
   );
