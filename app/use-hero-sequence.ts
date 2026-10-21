@@ -7,8 +7,12 @@ type Frame = { image: CanvasImageSource; width: number; height: number; release:
 
 async function decodeFrame(blob: Blob): Promise<Frame> {
   if (typeof createImageBitmap === "function") {
-    const image = await createImageBitmap(blob);
-    return { image, width: image.width, height: image.height, release: () => image.close() };
+    try {
+      const image = await createImageBitmap(blob);
+      return { image, width: image.width, height: image.height, release: () => image.close() };
+    } catch {
+      // Some browsers expose ImageBitmap but cannot decode every supported image format.
+    }
   }
   const url = URL.createObjectURL(blob);
   const image = new window.Image();
@@ -43,13 +47,24 @@ export function useHeroSequence(
     const mobile = window.matchMedia("(max-width: 767px)");
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
     const cache = new Map<number, Frame>();
+    // Keep compressed bytes separately: revisiting a frame must not wait for the network.
+    const downloaded = new Map<number, Blob>();
+    const decoding = new Set<number>();
     const pending = new Map<number, AbortController>();
-    const failed = new Set<number>();
+    const failures = new Map<number, { attempts: number; retryAt: number }>();
+    const preloadOrder: number[] = [];
+    for (let index = 0; index < sequence.frameCount; index += 8) preloadOrder.push(index);
+    preloadOrder.push(sequence.frameCount - 1);
+    for (let index = 0; index < sequence.frameCount; index++) {
+      if (!preloadOrder.includes(index)) preloadOrder.push(index);
+    }
     const panels = Array.from(section.querySelectorAll<HTMLElement>(".cinematic-hero__chapter"));
     let variant = mobile.matches ? "mobile" : "desktop";
     let disposed = false;
     let visible = false;
     let tick = 0;
+    let retryTimer = 0;
+    let generation = 0;
     let target = 0;
     let drawn = -1;
     let direction = 1;
@@ -65,9 +80,21 @@ export function useHeroSequence(
       pending.clear();
     };
     const clearCache = () => {
+      generation++;
       for (const frame of cache.values()) frame.release();
       cache.clear();
+      downloaded.clear();
+      decoding.clear();
+      failures.clear();
       drawn = -1;
+    };
+    const recordFailure = (index: number) => {
+      const attempts = (failures.get(index)?.attempts ?? 0) + 1;
+      failures.set(index, { attempts, retryAt: performance.now() + 600 });
+      if (attempts < 3) {
+        window.clearTimeout(retryTimer);
+        retryTimer = window.setTimeout(schedule, 650);
+      }
     };
     const draw = () => {
       if (!width || !height) return;
@@ -91,21 +118,45 @@ export function useHeroSequence(
 
     const loadWindow = () => {
       if (!enabled()) return;
-      // Small initial load; prefetch primarily in the direction of travel.
+      // Decode only a small window, but progressively download the complete sequence.
+      // Aborting requests on every scroll change starves playback on real networks.
       const radius = connection?.saveData ? 1 : target === 0 ? 2 : mobile.matches ? 6 : 8;
       const wanted = [target];
       for (let offset = 1; offset <= radius; offset++) wanted.push(target + offset * direction);
       for (let offset = 1; offset <= Math.min(radius, 3); offset++) wanted.push(target - offset * direction);
       const keep = new Set(wanted);
-      for (const [index, controller] of pending) {
-        if (!keep.has(index)) { controller.abort(); pending.delete(index); }
+      let nearest = -1;
+      let distance = Infinity;
+      for (const index of downloaded.keys()) {
+        if (Math.abs(index - target) < distance) { nearest = index; distance = Math.abs(index - target); }
       }
+      if (nearest >= 0) keep.add(nearest);
       for (const [index, frame] of cache) {
         if (!keep.has(index) && index !== drawn) { frame.release(); cache.delete(index); }
       }
-      for (const index of wanted) {
-        if (pending.size >= (connection?.saveData ? 1 : 3)) break;
-        if (index < 0 || index >= sequence.frameCount || cache.has(index) || pending.has(index) || failed.has(index)) continue;
+      const decodeOrder = nearest >= 0 ? [target, nearest, ...wanted] : wanted;
+      for (const index of decodeOrder) {
+        if (decoding.size >= 2) break;
+        const blob = downloaded.get(index);
+        if (!blob || cache.has(index) || decoding.has(index)) continue;
+        decoding.add(index);
+        const startedGeneration = generation;
+        void decodeFrame(blob).then((frame) => {
+          if (disposed || startedGeneration !== generation) { frame.release(); return; }
+          cache.set(index, frame);
+        }).catch(() => {
+          if (startedGeneration === generation) { downloaded.delete(index); recordFailure(index); }
+        }).finally(() => {
+          if (startedGeneration === generation) { decoding.delete(index); schedule(); }
+        });
+      }
+
+      const queue = connection?.saveData ? wanted : [...wanted, ...preloadOrder];
+      for (const index of queue) {
+        if (pending.size >= (connection?.saveData ? 1 : 6)) break;
+        const failure = failures.get(index);
+        if (index < 0 || index >= sequence.frameCount || downloaded.has(index) || pending.has(index)
+          || (failure && (failure.attempts >= 3 || performance.now() < failure.retryAt))) continue;
         const controller = new AbortController();
         pending.set(index, controller);
         const path = `/images/hero-sequence/${variant}/frame-${String(index + 1).padStart(4, "0")}.webp?v=${sequence.version}`;
@@ -114,13 +165,14 @@ export function useHeroSequence(
             if (!response.ok) throw new Error(`Frame request failed: ${response.status}`);
             return response.blob();
           })
-          .then(decodeFrame)
-          .then((frame) => {
-            if (controller.signal.aborted || !enabled()) { frame.release(); return; }
-            cache.set(index, frame);
-            schedule();
+          .then((blob) => {
+            if (controller.signal.aborted || disposed) return;
+            downloaded.set(index, blob);
           })
-          .catch(() => { if (!controller.signal.aborted) failed.add(index); })
+          .catch(() => {
+            if (controller.signal.aborted || disposed) return;
+            recordFailure(index);
+          })
           .finally(() => {
             if (pending.get(index) === controller) pending.delete(index);
             if (enabled()) schedule();
@@ -159,7 +211,6 @@ export function useHeroSequence(
         variant = nextVariant;
         abortPending();
         clearCache();
-        failed.clear();
         canvas.style.opacity = "0";
       }
       const cssWidth = canvas.clientWidth;
@@ -199,6 +250,7 @@ export function useHeroSequence(
 
     return () => {
       disposed = true;
+      window.clearTimeout(retryTimer);
       refreshRef.current = null;
       cancelAnimationFrame(tick);
       observer.disconnect();
