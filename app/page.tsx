@@ -9,10 +9,9 @@ import {
   useInView,
   useMotionValue,
   useReducedMotion,
-  useScroll,
   useSpring,
-  useTransform,
 } from "framer-motion";
+import CinematicHero from "./cinematic-hero";
 import ContactSection from "./contact-section";
 import { whatsappLink } from "./contact-config";
 import { useScrollExperience } from "./use-scroll-experience";
@@ -614,7 +613,6 @@ export default function Home() {
   const [preloaderVisible, setPreloaderVisible] = useState(true);
 
   const reduceMotion = useReducedMotion();
-  const heroRef = useRef<HTMLElement>(null);
 
   useSmoothScroll(motionPaused, reduceMotion);
   useScrollReveal();
@@ -627,7 +625,7 @@ export default function Home() {
     document.documentElement.classList.add("preloader-active");
 
     const finish = () => {
-      const remaining = Math.max(0, 2050 - (performance.now() - startedAt));
+      const remaining = Math.max(0, 450 - (performance.now() - startedAt));
       timer = window.setTimeout(() => {
         document.documentElement.classList.remove("preloader-active");
         setPreloaderVisible(false);
@@ -644,13 +642,6 @@ export default function Home() {
     };
   }, []);
 
-  const { scrollYProgress: heroProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const heroContentYRaw = useTransform(heroProgress, [0, 1], [0, -76]);
-  const heroContentOpacity = useTransform(heroProgress, [0, 0.72, 1], [1, 0.96, 0]);
-  const heroContentY = useSpring(heroContentYRaw, { stiffness: 110, damping: 28 });
   useEffect(() => {
     if (!mobileOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -700,8 +691,6 @@ export default function Home() {
     }
   }
 
-  /* Marquee items — multiplied for seamless continuous loop */
-  const marqueeItems = [...REGIONS, ...REGIONS, ...REGIONS, ...REGIONS];
 
   return (
     <>
@@ -795,102 +784,7 @@ export default function Home() {
 
       <main id="main-content" className={motionPaused ? "motion-paused" : undefined}>
         {/* ══ HERO ══════════════════════════════════════════════ */}
-        <section ref={heroRef} id="hero" className="hero" aria-label="Hero">
-          {/* Background */}
-          <div className="hero__bg-image" aria-hidden="true" />
-          <div className="hero__dots" aria-hidden="true" />
-          <div className="hero__fade" aria-hidden="true" />
-
-          {/* Centered layout */}
-          <motion.div
-            className="hero__body hero__body--center"
-            style={{
-              y: reduceMotion || motionPaused ? 0 : heroContentY,
-              opacity: reduceMotion || motionPaused ? 1 : heroContentOpacity,
-            }}
-          >
-            <div className="hero__content-center">
-              <motion.div
-                className="hero__eyebrow"
-                initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.15 }}
-              >
-                <span className="hero__eyebrow-dot" />
-                GLOBAL LOGISTICS NETWORK &nbsp;&middot;&nbsp; KOCHI HQ
-              </motion.div>
-
-              <h1 className="hero__headline hero__headline--center">
-                <span className="hero__headline-mask">
-                  <motion.span
-                    initial={reduceMotion ? false : { y: "110%", rotate: 2 }}
-                    animate={{ y: 0, rotate: 0 }}
-                    transition={{ duration: 0.95, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    MOVING CARGO
-                  </motion.span>
-                </span>
-                <span className="hero__headline-mask">
-                  <motion.span
-                    className="hl-accent"
-                    initial={reduceMotion ? false : { y: "110%", rotate: 2 }}
-                    animate={{ y: 0, rotate: 0 }}
-                    transition={{ duration: 0.95, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    BEYOND BORDERS
-                  </motion.span>
-                </span>
-              </h1>
-
-              <motion.p
-                className="hero__intro"
-                initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.52 }}
-              >
-                Across oceans. Across continents. One connected logistics partner
-                to keep your business moving.
-              </motion.p>
-
-              <motion.div
-                className="hero__actions hero__actions--center"
-                initial={reduceMotion ? false : { opacity: 0, y: 22 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.64 }}
-              >
-                <a id="hero-cta-primary" href="#contact"
-                  className="btn btn-primary btn-lg"
-                  onClick={(e) => smoothTo(e, "contact")}>
-                  Get a Quote <IconArrowRight />
-                </a>
-                <a id="hero-cta-secondary" href="#services"
-                  className="btn btn-ghost btn-lg"
-                  onClick={(e) => smoothTo(e, "services")}>
-                  Explore services <IconArrowRight size={13} />
-                </a>
-              </motion.div>
-
-            </div>
-          </motion.div>
-
-          {/* Marquee regions strip */}
-          <div className="hero__strip">
-            <button className="motion-toggle" type="button" aria-pressed={motionPaused}
-              onClick={() => setMotionPaused(!motionPaused)}>
-              {motionPaused ? "Resume motion" : "Pause motion"}
-            </button>
-            <div className="marquee" aria-hidden="true">
-              <div className="marquee__track">
-                {marqueeItems.map((r, i) => (
-                  <span key={i} className="marquee__item">
-                    {r.name}
-                    <span className="marquee__sep" />
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        <CinematicHero paused={motionPaused} onToggleMotion={() => setMotionPaused(!motionPaused)} onNavigate={smoothTo} />
 
         {/* ══ ABOUT ═════════════════════════════════════════════ */}
         <section id="about" className="about-section" data-scroll-surface="sand" aria-label="About Cargoworks">
