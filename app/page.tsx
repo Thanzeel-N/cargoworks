@@ -542,7 +542,7 @@ function WhyFeatureGrid() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
       >
-        <Image src={lead.image} alt="" fill sizes="(max-width: 900px) 100vw, 52vw" />
+        <Image src={lead.image} alt="" fill sizes="(max-width: 1200px) 100vw, 52vw" />
         <div className="why-showcase__lead-shade" aria-hidden="true" />
         <div className="why-showcase__lead-top">
           <span>{String(activeIndex + 1).padStart(2, "0")} / Core advantage</span>

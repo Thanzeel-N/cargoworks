@@ -7,7 +7,7 @@
   overflow: hidden;
   color: #fff !important;
   background-color: #171817 !important;
-  background-image: url("/images/contact-container-yard-v2.webp") !important;
+  background-image: url("/images/freight_sea_ship.webp") !important;
   background-position: 58% center !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
@@ -20,7 +20,7 @@
   inset: 0;
   background:
     linear-gradient(90deg, rgba(11, 14, 14, 0.7) 0%, rgba(11, 14, 14, 0.38) 46%, rgba(11, 14, 14, 0.12) 100%),
-    linear-gradient(180deg, rgba(7, 9, 9, 0.08), rgba(7, 9, 9, 0.26));
+    linear-gradient(180deg, rgba(7, 9, 9, 0.38), rgba(7, 9, 9, 0.4));
 }
 
 #main-content > .contact-studio::after { content: none; }
@@ -149,7 +149,7 @@
   position: absolute;
   z-index: -2;
   inset: -36px;
-  background: url("/images/contact-container-yard-v2.webp") 78% center / auto 118% no-repeat;
+  background: url("/images/freight_sea_ship.webp") 58% center / cover no-repeat;
   filter: blur(14px);
   transform: scale(1.08);
 }
@@ -159,7 +159,7 @@
   position: absolute;
   z-index: -1;
   inset: 0;
-  background: rgba(27, 31, 31, 0.46);
+  background: rgba(17, 27, 31, 0.72);
 }
 
 .shipment-form-panel__heading { margin-bottom: 1.5rem; text-align: center; }

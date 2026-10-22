@@ -1838,7 +1838,7 @@ textarea {
   padding: clamp(5.5rem, 9vw, 8.5rem) 0;
   color: #fff;
   background-color: #171817;
-  background-image: url("/images/contact-container-yard-v2.webp");
+  background-image: url("/images/freight_sea_ship.webp");
   background-position: 58% center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -10112,7 +10112,7 @@ article[id] {
   isolation: isolate;
   color: #fff !important;
   background-color: #171817 !important;
-  background-image: url("/images/contact-container-yard-v2.webp") !important;
+  background-image: url("/images/freight_sea_ship.webp") !important;
   background-position: 58% center !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
