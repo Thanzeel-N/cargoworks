@@ -1041,7 +1041,12 @@ export default function Home() {
             <div className="footer-minimal__links"><span>Support</span><a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Contact</a><a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Shipment enquiry</a></div>
             <div className="footer-minimal__links"><span>Explore</span><a href="#about" onClick={(e) => smoothTo(e, "about")}>About us</a><a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Our edge</a></div>
             <div className="footer-minimal__links"><span>Solutions</span><a href="#services" onClick={(e) => smoothTo(e, "services")}>Services</a><a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Industries</a></div>
-            <div className="footer-minimal__direct"><span>Email</span><a href="mailto:info@cargoworkslogistics.com">info@cargoworkslogistics.com</a>{footerChat && <><span>WhatsApp</span><a href={footerChat} target="_blank" rel="noopener noreferrer">Chat with our team ↗</a></>}</div>
+            <div className="footer-minimal__direct">
+              <span>Phone &amp; WhatsApp</span>
+              <a href={footerChat || "https://wa.me/917994841888"} target="_blank" rel="noopener noreferrer">+91 79948 41888 ↗</a>
+              <span>Email</span>
+              <a href="mailto:info@cargoworkslogistics.com">info@cargoworkslogistics.com</a>
+            </div>
           </div>
 
           <a href="#hero" className="footer-minimal__wordmark" onClick={(e) => smoothTo(e, "hero")}>CARGOWORKS</a>

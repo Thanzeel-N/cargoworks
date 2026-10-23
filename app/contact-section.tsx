@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { CONTACT_EMAIL, WHATSAPP_NUMBER, whatsappLink } from "./contact-config";
+import {
+  CONTACT_EMAIL,
+  CONTACT_PHONE_DISPLAY,
+  CONTACT_PHONE_TEL,
+  WHATSAPP_NUMBER,
+  whatsappLink,
+} from "./contact-config";
 
 const services = ["Sea Freight", "Air Freight", "Fleet & Transportation", "Warehousing", "Customs Clearance"];
 
@@ -16,12 +22,33 @@ export default function ContactSection() {
           <h2 id="contact-title">Your next move.<br /><span>Starts here.</span></h2>
           <p>A single shipment or a whole supply chain. Tell us what you have in mind, and let’s find the right way forward.</p>
           <div className="contact-studio__channels">
-            {directChat && <a href={directChat} target="_blank" rel="noopener noreferrer"><small>CHAT WITH OUR TEAM</small><span>WhatsApp <i aria-hidden="true">↗</i></span></a>}
-            <a href={`mailto:${CONTACT_EMAIL}`}><small>PREFER EMAIL?</small><span>{CONTACT_EMAIL} <i aria-hidden="true">↗</i></span></a>
+            {directChat && (
+              <a href={directChat} target="_blank" rel="noopener noreferrer">
+                <small>CHAT ON WHATSAPP</small>
+                <span>{CONTACT_PHONE_DISPLAY} <i aria-hidden="true">↗</i></span>
+              </a>
+            )}
+            <a href={`mailto:${CONTACT_EMAIL}`}>
+              <small>PREFER EMAIL?</small>
+              <span>{CONTACT_EMAIL} <i aria-hidden="true">↗</i></span>
+            </a>
           </div>
           <div className="contact-studio__details">
-            <div><small>OUR BASE</small><p>Kochi, India</p><span>Connected worldwide.</span></div>
-            <div><small>OFFICE HOURS</small><p>Monday – Saturday</p><span>9:00 AM – 6:00 PM IST</span></div>
+            <div>
+              <small>DIRECT LINE</small>
+              <p><a href={`tel:${CONTACT_PHONE_TEL}`} style={{ color: "inherit", textDecoration: "none" }}>{CONTACT_PHONE_DISPLAY}</a></p>
+              <span>Call & WhatsApp</span>
+            </div>
+            <div>
+              <small>OUR BASE</small>
+              <p>Kochi, India</p>
+              <span>Connected worldwide.</span>
+            </div>
+            <div>
+              <small>OFFICE HOURS</small>
+              <p>Monday – Saturday</p>
+              <span>9:00 AM – 6:00 PM IST</span>
+            </div>
           </div>
         </div>
         <div className="shipment-form-panel">
