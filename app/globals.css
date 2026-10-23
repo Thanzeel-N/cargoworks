@@ -9188,9 +9188,12 @@ body {
   box-shadow: 0 18px 50px rgba(31, 41, 40, 0.06);
 }
 
-.services-list .service-card:nth-child(4),
+.services-list .service-card:nth-child(4) {
+  grid-column: 2 / span 2;
+}
+
 .services-list .service-card:nth-child(5) {
-  grid-column: span 3;
+  grid-column: 4 / span 2;
 }
 
 .services-list .service-card:nth-child(even) .service-card__image {
@@ -9276,19 +9279,20 @@ body {
 
 .delivery-process__layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.86fr);
-  gap: clamp(4rem, 8vw, 9rem);
+  grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
 }
 
 .delivery-process__content {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(3rem, 6vw, 7rem);
+  align-items: start;
 }
 
 .delivery-process__header {
   display: block;
-  margin-bottom: clamp(4rem, 7vw, 6rem);
+  margin-bottom: 0;
 }
 
 .delivery-process__header .section-title {
@@ -9324,7 +9328,7 @@ body {
 
 .delivery-process__steps {
   display: block;
-  margin-top: auto;
+  margin-top: 0;
 }
 
 .delivery-process__steps::before {
@@ -9429,7 +9433,8 @@ body {
     grid-column: span 3;
   }
 
-  .delivery-process__layout {
+  .delivery-process__layout,
+  .delivery-process__content {
     grid-template-columns: 1fr;
   }
 

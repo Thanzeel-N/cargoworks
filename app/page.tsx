@@ -526,7 +526,7 @@ function SwingingContainer() {
 }
 
 function WhyFeatureGrid() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(4);
   const lead = WHY_ITEMS[activeIndex];
   const supporting = WHY_ITEMS
     .map((item, index) => ({ item, index }))
@@ -542,7 +542,7 @@ function WhyFeatureGrid() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
       >
-        <Image src={lead.image} alt="" fill sizes="(max-width: 1200px) 100vw, 52vw" />
+        <Image src={lead.image} alt="" fill sizes="(max-width: 720px) 100vw, 52vw" />
         <div className="why-showcase__lead-shade" aria-hidden="true" />
         <div className="why-showcase__lead-top">
           <span>{String(activeIndex + 1).padStart(2, "0")} / Core advantage</span>
@@ -997,14 +997,6 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="delivery-process__visual reveal reveal-delay-2">
-                <Image src="/images/delivery-terminal-aerial.webp" alt="Top-down view of a freight truck moving through a container terminal" fill sizes="(max-width: 1050px) 100vw, 48vw" />
-                <div className="delivery-process__visual-shade" aria-hidden="true" />
-                <div className="delivery-process__metrics">
-                  <div><strong>5</strong><span>Core logistics services</span></div>
-                  <div><strong>15+</strong><span>Regions served</span></div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
