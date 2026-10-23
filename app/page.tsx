@@ -163,7 +163,7 @@ function CargoworksPreloader() {
       aria-label="Loading Cargoworks"
       initial={false}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.18, ease: [0.4, 0, 0.2, 1] } }}
+      exit={{ opacity: 0, transition: { duration: 0.55, ease: [0.4, 0, 0.2, 1] } }}
     >
       <div className="site-preloader__logo" aria-hidden="true">
         <span className="site-preloader__mark">
@@ -632,7 +632,7 @@ export default function Home() {
     document.documentElement.classList.add("preloader-active");
 
     const finish = () => {
-      const remaining = Math.max(0, 450 - (performance.now() - startedAt));
+      const remaining = reduceMotion ? 0 : Math.max(0, 2600 - (performance.now() - startedAt));
       timer = window.setTimeout(() => {
         document.documentElement.classList.remove("preloader-active");
         setPreloaderVisible(false);
@@ -647,7 +647,7 @@ export default function Home() {
       window.clearTimeout(timer);
       document.documentElement.classList.remove("preloader-active");
     };
-  }, []);
+  }, [reduceMotion]);
 
   useEffect(() => {
     if (!mobileOpen) return;

@@ -1,8 +1,10 @@
 /* Motion enhances the existing content; no text is hidden by this layer. */
 .site-preloader__logo .site-preloader__mark img {
   display: block;
-  width: clamp(2.8rem, 6vw, 4.5rem);
-  height: auto;
+  width: auto;
+  height: clamp(1.6rem, 3.2vw, 2.35rem);
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
