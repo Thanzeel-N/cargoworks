@@ -116,8 +116,7 @@
   }
 
   .scroll-experience .why-story__moving-image,
-  .scroll-experience .delivery-process__visual > img,
-  .scroll-experience .service-card__image > img {
+  .scroll-experience .delivery-process__visual > img {
     transform: translateY(var(--image-drift, 0px)) scale(1.09) !important;
   }
 

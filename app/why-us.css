@@ -72,8 +72,8 @@
   z-index: -1;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(12, 17, 17, 0.28), transparent 38%),
-    linear-gradient(0deg, rgba(12, 17, 17, 0.9), rgba(12, 17, 17, 0.05) 62%);
+    linear-gradient(180deg, rgba(12, 17, 17, 0.3) 0%, transparent 22%),
+    linear-gradient(0deg, rgba(12, 17, 17, 0.8) 0%, rgba(12, 17, 17, 0.25) 28%, transparent 50%);
 }
 
 .why-showcase__lead-top,

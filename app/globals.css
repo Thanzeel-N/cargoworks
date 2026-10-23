@@ -1377,11 +1377,7 @@ body {
 }
 
 .service-card__image::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 58%, rgba(31, 41, 40, 0.2));
-  pointer-events: none;
+  display: none;
 }
 
 .service-card__image img {
@@ -9889,6 +9885,33 @@ body {
 .navbar__official-logo {
   width: clamp(220px, 18vw, 280px);
   filter: none !important;
+}
+
+.navbar__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.navbar__logo-icon {
+  width: auto;
+  height: clamp(20px, 2.1vw, 25px);
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+}
+
+.navbar__logo-name {
+  font-family: var(--font-mukta-mahee), "Mukta Mahee", sans-serif !important;
+  font-size: clamp(1.22rem, 1.5vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--forest-black) !important;
+  line-height: 1;
+  display: inline-block;
+  padding-top: 1px;
 }
 
 .navbar__link,

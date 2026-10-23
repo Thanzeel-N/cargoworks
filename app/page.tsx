@@ -142,14 +142,15 @@ function CargoworksLogo() {
   return (
     <a href="#" className="navbar__logo" aria-label="Cargoworks home">
       <Image
-        className="navbar__official-logo"
-        src="/logo/Cargoworks Horizontal.svg"
-        alt="Cargoworks"
-        width={514}
-        height={55}
+        className="navbar__logo-icon"
+        src="/logo/Cargoworks Icon.svg"
+        alt=""
+        width={46}
+        height={24}
         priority
         unoptimized
       />
+      <span className="navbar__logo-name">CARGOWORKS</span>
     </a>
   );
 }
@@ -542,7 +543,13 @@ function WhyFeatureGrid() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
       >
-        <Image src={lead.image} alt="" fill sizes="(max-width: 720px) 100vw, 52vw" />
+        <Image
+          src={lead.image}
+          alt=""
+          fill
+          sizes="(max-width: 720px) 100vw, (max-width: 1200px) 60vw, 850px"
+          quality={90}
+        />
         <div className="why-showcase__lead-shade" aria-hidden="true" />
         <div className="why-showcase__lead-top">
           <span>{String(activeIndex + 1).padStart(2, "0")} / Core advantage</span>
@@ -873,7 +880,8 @@ export default function Home() {
                       src={service.image}
                       alt={service.title}
                       fill
-                      sizes="(max-width: 700px) 100vw, (max-width: 1050px) 50vw, 33vw"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+                      quality={90}
                     />
                   </div>
                   <div className="service-card__footer">

@@ -32,11 +32,14 @@ for (const name of (await readdir(directory)).sort()) {
   }
 
   const metadata = await sharp(input).metadata();
+  const isHighClarity = /^(freight_|why-).*\.webp$/i.test(name);
+  const targetQuality = isHighClarity ? 95 : (metadata.hasAlpha ? 85 : 76);
+  const targetWidth = isHighClarity ? 1792 : 1600;
   const pipeline = sharp(input).rotate().resize({
-    width: 1600, height: 1600, fit: "inside", withoutEnlargement: true,
+    width: targetWidth, height: targetWidth, fit: "inside", withoutEnlargement: true,
   });
   const candidate = await (/\.webp$/i.test(name)
-    ? pipeline.webp({ quality: metadata.hasAlpha ? 85 : 76, alphaQuality: 100, effort: 6 })
+    ? pipeline.webp({ quality: targetQuality, alphaQuality: 100, effort: 6 })
     : pipeline.jpeg({ quality: 80, mozjpeg: true, progressive: true })
   ).toBuffer();
   // Never replace an asset with a larger encoding.
