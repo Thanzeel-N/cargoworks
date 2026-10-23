@@ -235,11 +235,11 @@ const SERVICES = [
 ];
 
 const WHY_ITEMS = [
-  { icon: <IconLayers size={24} />, image: "/images/why-end-to-end-real.webp", accent: "#cf5a39", title: "End-to-End Logistics", desc: "One partner for freight, transportation, warehousing, and customs clearance." },
-  { icon: <IconZap size={24} />, image: "/images/why-reliable-real.webp", accent: "#e2a642", title: "Reliable & Efficient", desc: "Timely deliveries and smooth operations you can count on." },
-  { icon: <IconEye size={24} />, image: "/images/why-transparent-real.webp", accent: "#78a9b8", title: "Transparent Services", desc: "Clear communication, pricing, and real-time shipment visibility." },
-  { icon: <IconHeart size={24} />, image: "/images/why-customer-real.webp", accent: "#d3ba83", title: "Customer-Focused", desc: "Dedicated support from pickup to final delivery." },
-  { icon: <IconCpu size={24} />, image: "/images/why-technology-real.webp", accent: "#758ca8", title: "Technology-Driven", desc: "Modern tools for better tracking and supply chain management." },
+  { icon: <IconLayers size={24} />, image: "/images/why-end-to-end-v2.webp", accent: "#cf5a39", title: "End-to-End Logistics", desc: "One partner for freight, transportation, warehousing, and customs clearance." },
+  { icon: <IconZap size={24} />, image: "/images/why-reliable-v2.webp", accent: "#e2a642", title: "Reliable & Efficient", desc: "Timely deliveries and smooth operations you can count on." },
+  { icon: <IconEye size={24} />, image: "/images/why-transparent-v2.webp", accent: "#78a9b8", title: "Transparent Services", desc: "Clear communication, pricing, and real-time shipment visibility." },
+  { icon: <IconHeart size={24} />, image: "/images/why-customer-v2.webp", accent: "#d3ba83", title: "Customer-Focused", desc: "Dedicated support from pickup to final delivery." },
+  { icon: <IconCpu size={24} />, image: "/images/why-technology-v2.webp", accent: "#758ca8", title: "Technology-Driven", desc: "Modern tools for better tracking and supply chain management." },
 ];
 
 const DELIVERY_STEPS = [
@@ -527,7 +527,7 @@ function SwingingContainer() {
 }
 
 function WhyFeatureGrid() {
-  const [activeIndex, setActiveIndex] = useState(4);
+  const [activeIndex, setActiveIndex] = useState(0);
   const lead = WHY_ITEMS[activeIndex];
   const supporting = WHY_ITEMS
     .map((item, index) => ({ item, index }))

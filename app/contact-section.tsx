@@ -67,28 +67,28 @@ export default function ContactSection() {
             else window.location.href = link;
           }}>
             <fieldset className="shipment-form__group">
-            <legend><span>01</span> Your details</legend>
-            <div className="shipment-form__row">
-              <label htmlFor="shipment-name"><span className="shipment-form__label">Full name <span aria-hidden="true">*</span></span><input id="shipment-name" name="name" required autoComplete="name" maxLength={100} placeholder="Your name" /></label>
-              <label htmlFor="shipment-email"><span className="shipment-form__label">Email <span aria-hidden="true">*</span></span><input id="shipment-email" name="email" type="email" required autoComplete="email" maxLength={150} placeholder="you@company.com" /></label>
-            </div>
-            <div className="shipment-form__row">
-              <label htmlFor="shipment-company"><span className="shipment-form__label">Company <small>Optional</small></span><input id="shipment-company" name="company" autoComplete="organization" maxLength={100} placeholder="Company name" /></label>
-              <label htmlFor="shipment-phone"><span className="shipment-form__label">Phone <small>Optional</small></span><input id="shipment-phone" name="phone" type="tel" autoComplete="tel" maxLength={40} placeholder="Include country code" /></label>
-            </div>
+              <legend><span>01</span> Your details</legend>
+              <div className="shipment-form__row">
+                <label htmlFor="shipment-name"><span className="shipment-form__label">Full name <span aria-hidden="true">*</span></span><input id="shipment-name" name="name" required autoComplete="name" maxLength={100} placeholder="Your name" /></label>
+                <label htmlFor="shipment-email"><span className="shipment-form__label">Email <span aria-hidden="true">*</span></span><input id="shipment-email" name="email" type="email" required autoComplete="email" maxLength={150} placeholder="you@company.com" /></label>
+              </div>
+              <div className="shipment-form__row">
+                <label htmlFor="shipment-company"><span className="shipment-form__label">Company <span aria-hidden="true">*</span></span><input id="shipment-company" name="company" required autoComplete="organization" maxLength={100} placeholder="Company name" /></label>
+                <label htmlFor="shipment-phone"><span className="shipment-form__label">Phone <span aria-hidden="true">*</span></span><input id="shipment-phone" name="phone" type="tel" required autoComplete="tel" maxLength={40} placeholder="Include country code" /></label>
+              </div>
             </fieldset>
             <fieldset className="shipment-form__group">
-            <legend><span>02</span> Your shipment</legend>
-            <label htmlFor="shipment-service"><span className="shipment-form__label">Service <span aria-hidden="true">*</span></span><select id="shipment-service" name="service" required defaultValue=""><option value="" disabled>Select a service</option>{services.map((service) => <option key={service}>{service}</option>)}</select></label>
-            <div className="shipment-form__row">
-              <label htmlFor="shipment-origin"><span className="shipment-form__label">Origin <span aria-hidden="true">*</span></span><input id="shipment-origin" name="origin" required maxLength={120} placeholder="City or port" /></label>
-              <label htmlFor="shipment-destination"><span className="shipment-form__label">Destination <span aria-hidden="true">*</span></span><input id="shipment-destination" name="destination" required maxLength={120} placeholder="City or port" /></label>
-            </div>
-            <label htmlFor="shipment-message"><span className="shipment-form__label">Cargo details <span aria-hidden="true">*</span></span><textarea id="shipment-message" name="message" required rows={3} maxLength={1200} placeholder="Cargo type, quantity and preferred shipping date" /></label>
+              <legend><span>02</span> Your shipment</legend>
+              <label htmlFor="shipment-service"><span className="shipment-form__label">Service <span aria-hidden="true">*</span></span><select id="shipment-service" name="service" required defaultValue=""><option value="" disabled>Select a service</option>{services.map((service) => <option key={service}>{service}</option>)}</select></label>
+              <div className="shipment-form__row">
+                <label htmlFor="shipment-origin"><span className="shipment-form__label">Origin <small>Optional</small></span><input id="shipment-origin" name="origin" maxLength={120} placeholder="City or port" /></label>
+                <label htmlFor="shipment-destination"><span className="shipment-form__label">Destination <small>Optional</small></span><input id="shipment-destination" name="destination" maxLength={120} placeholder="City or port" /></label>
+              </div>
+              <label htmlFor="shipment-message"><span className="shipment-form__label">Cargo details <small>Optional</small></span><textarea id="shipment-message" name="message" rows={3} maxLength={1200} placeholder="Cargo type, quantity and preferred shipping date" /></label>
             </fieldset>
             <div className="shipment-form__action">
-            <button type="submit">{WHATSAPP_NUMBER ? "Continue on WhatsApp" : "Prepare email enquiry"}<span aria-hidden="true">↗</span></button>
-            <p className="shipment-form__note">* Required fields. {WHATSAPP_NUMBER ? "Review in WhatsApp before sending." : "Review in your email app before sending."}</p>
+              <button type="submit">{WHATSAPP_NUMBER ? "Continue on WhatsApp" : "Prepare email enquiry"}<span aria-hidden="true">↗</span></button>
+              <p className="shipment-form__note">* Required fields. {WHATSAPP_NUMBER ? "Review in WhatsApp before sending." : "Review in your email app before sending."}</p>
             </div>
             <div className="shipment-form__status" role="status">{draftLink && <p className="shipment-form__feedback">Your enquiry is prepared. Nothing has been sent yet. <a href={draftLink} target="_blank" rel="noopener noreferrer">Open {WHATSAPP_NUMBER ? "WhatsApp" : "email draft"} again ↗</a></p>}</div>
           </form>
