@@ -472,17 +472,15 @@ function AnimatedStat({ value, label }: { value: string; label: string }) {
 function CoverageRoute() {
   return (
     <div className="coverage-route" role="img" aria-label="Stylized world map showing Cargoworks coverage across India, the Gulf, Asia, Europe, and North America">
-      <div className="coverage-route__map">
-        <Image
-          className="coverage-map coverage-map--accurate"
-          src="/images/world-network-map.svg"
-          alt=""
-          width={1440}
-          height={560}
-          sizes="100vw"
-          unoptimized
-        />
-      </div>
+      <Image
+        className="coverage-map coverage-map--accurate"
+        src="/images/world-network-map.svg"
+        alt=""
+        width={1440}
+        height={560}
+        sizes="100vw"
+        unoptimized
+      />
 
       <div className="coverage-route__legend" aria-hidden="true">
         {REGIONS.slice(0, 10).map((region) => <span key={region.name}>{region.name}</span>)}
