@@ -9538,11 +9538,8 @@ body {
 
 .industries .coverage-route {
   position: relative;
-  min-height: clamp(420px, 45vw, 620px);
+  min-height: clamp(390px, 42vw, 610px);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
   color: var(--muted-blue);
   background:
     radial-gradient(circle at 63% 43%, rgba(143, 174, 163, 0.16), transparent 24rem),
@@ -9551,20 +9548,15 @@ body {
 
 .coverage-map {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 3.75rem;
+  inset: 0;
+  display: block;
   width: 100%;
-  height: calc(100% - 3.75rem);
-  pointer-events: none;
-  mask-image: linear-gradient(to bottom, #000 68%, transparent 96%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 96%);
+  height: 100%;
 }
 
 .coverage-map--accurate {
   object-fit: cover;
-  object-position: center 30%;
+  object-position: center 25%;
 }
 
 .coverage-map__land {
@@ -9593,26 +9585,17 @@ body {
 }
 
 .coverage-route__legend {
-  position: relative;
-  z-index: 2;
+  position: absolute;
+  right: var(--container-pad);
+  bottom: 0.75rem;
+  left: var(--container-pad);
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem 1.6rem;
-  padding: 0 var(--container-pad) 1.65rem;
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.72);
-  font: 500 0.65rem var(--font-mono);
+  gap: 0.5rem 1.25rem;
+  color: rgba(255, 255, 255, 0.62);
+  font: 500 0.58rem var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-}
-
-.coverage-route__legend span {
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
 }
 
 .coverage-route__legend span::before {
@@ -9620,7 +9603,7 @@ body {
   display: inline-block;
   width: 4px;
   height: 4px;
-  margin-right: 0.55rem;
+  margin: 0 0.5rem 0.1rem 0;
   border-radius: 50%;
   background: var(--parchment);
 }
@@ -9640,37 +9623,32 @@ body {
   }
 
   .industries .coverage-route {
-    min-height: clamp(340px, 55vw, 440px);
+    min-height: 430px;
   }
 
   .coverage-map {
-    bottom: 3.5rem;
-    height: calc(100% - 3.5rem);
-    width: 100%;
-    transform: none;
+    width: 150%;
+    max-width: none;
+    transform: translateX(-25%);
   }
 
   .coverage-route__legend {
-    padding: 0 1.25rem 1.25rem;
-    gap: 0.5rem 1.15rem;
-    font-size: 0.58rem;
+    bottom: 0.75rem;
+    gap: 0.5rem 1rem;
+    font-size: 0.55rem;
   }
 }
 
 @media (max-width: 520px) {
   .industries .coverage-route {
-    min-height: 320px;
-  }
-
-  .coverage-map {
-    bottom: 3.75rem;
-    height: calc(100% - 3.75rem);
+    min-height: 360px;
   }
 
   .coverage-route__legend {
-    justify-content: flex-start;
-    padding: 0 1rem 1.1rem;
-    gap: 0.4rem 0.9rem;
+    right: 1rem;
+    bottom: 0.65rem;
+    left: 1rem;
+    gap: 0.4rem 0.8rem;
     font-size: 0.52rem;
   }
 }
