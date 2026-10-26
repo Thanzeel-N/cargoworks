@@ -53,17 +53,30 @@ export function useHeroSequence(
     const pending = new Map<number, AbortController>();
     const failures = new Map<number, { attempts: number; retryAt: number }>();
     const preloadOrder: number[] = [];
-    for (let index = 0; index < sequence.frameCount; index += 8) preloadOrder.push(index);
-    preloadOrder.push(sequence.frameCount - 1);
+    // Priority 1: Contiguous initial buffer (frames 0 to 28) so first-time scroll has zero lag.
+    for (let index = 0; index <= Math.min(28, sequence.frameCount - 1); index++) {
+      preloadOrder.push(index);
+    }
+    // Priority 2: Keyframe milestones across the film (every 6th frame)
+    for (let index = 30; index < sequence.frameCount; index += 6) {
+      if (!preloadOrder.includes(index)) preloadOrder.push(index);
+    }
+    // Priority 3: Final frame
+    if (!preloadOrder.includes(sequence.frameCount - 1)) {
+      preloadOrder.push(sequence.frameCount - 1);
+    }
+    // Priority 4: All remaining frames in sequence
     for (let index = 0; index < sequence.frameCount; index++) {
       if (!preloadOrder.includes(index)) preloadOrder.push(index);
     }
     const panels = Array.from(section.querySelectorAll<HTMLElement>(".cinematic-hero__chapter"));
     let variant = mobile.matches ? "mobile" : "desktop";
     let disposed = false;
-    let visible = false;
+    let visible = true;
     let tick = 0;
     let retryTimer = 0;
+    let readinessTimer = 0;
+    let heroReadyNotified = false;
     let generation = 0;
     let target = 0;
     let drawn = -1;
@@ -74,7 +87,25 @@ export function useHeroSequence(
     let scrollDistance = 1;
     let sectionTop = 0;
 
-    const enabled = () => !disposed && visible && !pausedRef.current && !preference.matches && !document.hidden;
+    const notifyHeroReady = () => {
+      if (heroReadyNotified) return;
+      heroReadyNotified = true;
+      if (typeof window !== "undefined") {
+        (window as unknown as { __heroReady?: boolean }).__heroReady = true;
+        window.dispatchEvent(new CustomEvent("cargoworks:hero-ready"));
+      }
+    };
+
+    const checkHeroReadiness = () => {
+      if (heroReadyNotified) return;
+      // Ready as soon as frame 0 is drawn and initial playback frames are buffered
+      const minBuffer = connection?.saveData ? 2 : mobile.matches ? 3 : 5;
+      if (drawn >= 0 && downloaded.size >= minBuffer) {
+        notifyHeroReady();
+      }
+    };
+
+    const enabled = () => !disposed && (visible || target === 0) && !pausedRef.current && !preference.matches && !document.hidden;
     const abortPending = () => {
       for (const controller of pending.values()) controller.abort();
       pending.clear();
@@ -114,17 +145,26 @@ export function useHeroSequence(
       drawn = nearest;
       canvas.dataset.frame = String(nearest);
       canvas.style.opacity = "1";
+      checkHeroReadiness();
     };
 
     const loadWindow = () => {
       if (!enabled()) return;
-      // Decode only a small window, but progressively download the complete sequence.
-      // Aborting requests on every scroll change starves playback on real networks.
-      const radius = connection?.saveData ? 1 : target === 0 ? 2 : mobile.matches ? 6 : 8;
+      // Decode an ample forward window so initial and subsequent scrolls never hitch.
+      const forwardRadius = connection?.saveData
+        ? 2
+        : target === 0
+          ? (mobile.matches ? 20 : 28)
+          : (mobile.matches ? 8 : 14);
+      const backwardRadius = connection?.saveData ? 1 : (mobile.matches ? 4 : 6);
       const wanted = [target];
-      for (let offset = 1; offset <= radius; offset++) wanted.push(target + offset * direction);
-      for (let offset = 1; offset <= Math.min(radius, 3); offset++) wanted.push(target - offset * direction);
+      for (let offset = 1; offset <= forwardRadius; offset++) wanted.push(target + offset * direction);
+      for (let offset = 1; offset <= backwardRadius; offset++) wanted.push(target - offset * direction);
       const keep = new Set(wanted);
+      // Keep initial contiguous buffer in cache so micro-scrolls at the top never purge frame 0 or early frames
+      if (target <= 16) {
+        for (let i = 0; i <= Math.min(16, sequence.frameCount - 1); i++) keep.add(i);
+      }
       let nearest = -1;
       let distance = Infinity;
       for (const index of downloaded.keys()) {
@@ -135,8 +175,9 @@ export function useHeroSequence(
         if (!keep.has(index) && index !== drawn) { frame.release(); cache.delete(index); }
       }
       const decodeOrder = nearest >= 0 ? [target, nearest, ...wanted] : wanted;
+      const maxDecoding = target === 0 ? 4 : 2;
       for (const index of decodeOrder) {
-        if (decoding.size >= 2) break;
+        if (decoding.size >= maxDecoding) break;
         const blob = downloaded.get(index);
         if (!blob || cache.has(index) || decoding.has(index)) continue;
         decoding.add(index);
@@ -144,6 +185,7 @@ export function useHeroSequence(
         void decodeFrame(blob).then((frame) => {
           if (disposed || startedGeneration !== generation) { frame.release(); return; }
           cache.set(index, frame);
+          checkHeroReadiness();
         }).catch(() => {
           if (startedGeneration === generation) { downloaded.delete(index); recordFailure(index); }
         }).finally(() => {
@@ -151,16 +193,18 @@ export function useHeroSequence(
         });
       }
 
+      const maxConcurrent = connection?.saveData ? 2 : target === 0 ? 8 : 6;
       const queue = connection?.saveData ? wanted : [...wanted, ...preloadOrder];
       for (const index of queue) {
-        if (pending.size >= (connection?.saveData ? 1 : 6)) break;
+        if (pending.size >= maxConcurrent) break;
         const failure = failures.get(index);
         if (index < 0 || index >= sequence.frameCount || downloaded.has(index) || pending.has(index)
           || (failure && (failure.attempts >= 3 || performance.now() < failure.retryAt))) continue;
         const controller = new AbortController();
         pending.set(index, controller);
         const path = `/images/hero-sequence/${variant}/frame-${String(index + 1).padStart(4, "0")}.webp?v=${sequence.version}`;
-        void fetch(path, { signal: controller.signal, priority: index === target ? "high" : "low" })
+        const isHighPriority = index <= target + 8;
+        void fetch(path, { signal: controller.signal, priority: isHighPriority ? "high" : "low" })
           .then((response) => {
             if (!response.ok) throw new Error(`Frame request failed: ${response.status}`);
             return response.blob();
@@ -168,6 +212,7 @@ export function useHeroSequence(
           .then((blob) => {
             if (controller.signal.aborted || disposed) return;
             downloaded.set(index, blob);
+            checkHeroReadiness();
           })
           .catch(() => {
             if (controller.signal.aborted || disposed) return;
@@ -247,10 +292,14 @@ export function useHeroSequence(
     document.addEventListener("visibilitychange", refresh);
     preference.addEventListener("change", onPreference);
     resize();
+    readinessTimer = window.setTimeout(() => {
+      if (drawn >= 0) notifyHeroReady();
+    }, 1000);
 
     return () => {
       disposed = true;
       window.clearTimeout(retryTimer);
+      window.clearTimeout(readinessTimer);
       refreshRef.current = null;
       cancelAnimationFrame(tick);
       observer.disconnect();

@@ -83,11 +83,11 @@ test("production metadata, image optimizer and security headers respond", async 
   expect(await home.text()).toContain('rel="canonical" href="https://cargoworkslogistics.com"');
   expect(await (await request.get("/robots.txt")).text()).toContain("https://cargoworkslogistics.com/sitemap.xml");
   expect(await (await request.get("/sitemap.xml")).text()).toContain("https://cargoworkslogistics.com");
-  const image = await request.get("/_next/image?url=%2Fimages%2Ffreight_warehouse.webp&w=640&q=75", {
+  const image = await request.get("/_next/image?url=%2Fimages%2Fservices%2Fwarehousing.webp&w=640&q=75", {
     headers: { accept: "image/webp" },
   });
   expect(image.ok()).toBe(true);
   expect(image.headers()["content-type"]).toBe("image/webp");
-  const original = await request.get("/images/freight_warehouse.webp");
+  const original = await request.get("/images/services/warehousing.webp");
   expect((await image.body()).byteLength).toBeLessThan((await original.body()).byteLength);
 });

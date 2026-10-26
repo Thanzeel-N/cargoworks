@@ -7,7 +7,7 @@
   overflow: hidden;
   color: #fff !important;
   background-color: #171817 !important;
-  background-image: url("/images/freight_sea_ship.webp") !important;
+  background-image: url("/images/contact-sea-freight.webp") !important;
   background-position: 58% center !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
@@ -149,7 +149,7 @@
   position: absolute;
   z-index: -2;
   inset: -36px;
-  background: url("/images/freight_sea_ship.webp") 58% center / cover no-repeat;
+  background: url("/images/contact-sea-freight.webp") 58% center / cover no-repeat;
   filter: blur(14px);
   transform: scale(1.08);
 }

@@ -1,15 +1,22 @@
 {
   "contact-container-yard-v2.webp": {
-    "sha256": "a35f7204e88ab5fdafee5a880c0d7742b7ede715fe1af5216e38ba510a52931f",
-    "originalBytes": 259548,
-    "optimizedBytes": 99582,
+    "sha256": "fc873c6eb5dae9acbf2f04a963000a514b25109117528d32e382b75be1948cb5",
+    "originalBytes": 99582,
+    "optimizedBytes": 95580,
     "width": 1600,
     "height": 600
   },
+  "contact-sea-freight.webp": {
+    "sha256": "daab0a8c45ae08985a7a4bdad63db355ae7bc62d35d4a648dd1c67d5950a9d32",
+    "originalBytes": 320874,
+    "optimizedBytes": 148296,
+    "width": 1376,
+    "height": 768
+  },
   "delivery-terminal-aerial.webp": {
-    "sha256": "313abcfad7ec6dba76110e91ef6fa27214c608c4f91e962fb8a08533de21cd8b",
-    "originalBytes": 223984,
-    "optimizedBytes": 166826,
+    "sha256": "97b3e801d7c22d7a3d0f56563b8aa5f8a4276937c06c34909316597f5dcde1ad",
+    "originalBytes": 166826,
+    "optimizedBytes": 159330,
     "width": 1194,
     "height": 1317
   },
@@ -19,41 +26,6 @@
     "optimizedBytes": 110954,
     "width": 1600,
     "height": 640
-  },
-  "freight_air_cargo.webp": {
-    "sha256": "355a6902026f0fa53fa7c0b945fe65171302b200b4ff2ae8cb21aa34136acb69",
-    "originalBytes": 578452,
-    "optimizedBytes": 578452,
-    "width": 1792,
-    "height": 1040
-  },
-  "freight_customs.webp": {
-    "sha256": "221c31de4faf9757c00d707ef4b641af2e4a3b4a71513e762a830ce603b430ee",
-    "originalBytes": 637364,
-    "optimizedBytes": 637364,
-    "width": 1792,
-    "height": 1040
-  },
-  "freight_sea_ship.webp": {
-    "sha256": "ca4f100bc6918e59294e427ebf9815e796e869f351feba79cadd2b7b5d68f901",
-    "originalBytes": 727478,
-    "optimizedBytes": 727478,
-    "width": 1792,
-    "height": 1040
-  },
-  "freight_trucking.webp": {
-    "sha256": "e9230382968164d92f680c1c79a7acdb41333666c1d7fe4d3f558e5f179f1348",
-    "originalBytes": 611150,
-    "optimizedBytes": 611150,
-    "width": 1792,
-    "height": 1040
-  },
-  "freight_warehouse.webp": {
-    "sha256": "0b82ad789c137eb7bd19a901f3aa53564c84f202e67e124804fd1b9497d2f1d5",
-    "originalBytes": 738084,
-    "optimizedBytes": 738084,
-    "width": 1792,
-    "height": 1040
   },
   "hanging-container-v2.webp": {
     "sha256": "2587a8eb2cae6fb800244907727315981d549fce8c4423388636969aeb6b8f49",
@@ -68,40 +40,5 @@
     "optimizedBytes": 94020,
     "width": 1376,
     "height": 768
-  },
-  "why-customer-real.webp": {
-    "sha256": "8e4d9e46de54ac35743a919ce5b3af0187933313fe38059cad13c0496253b87f",
-    "originalBytes": 442424,
-    "optimizedBytes": 442424,
-    "width": 1792,
-    "height": 1195
-  },
-  "why-end-to-end-real.webp": {
-    "sha256": "b9e1ca3258742d324152368252b466c82e250c578b70e8476dd7cd1de79191e8",
-    "originalBytes": 504102,
-    "optimizedBytes": 504102,
-    "width": 1792,
-    "height": 1008
-  },
-  "why-reliable-real.webp": {
-    "sha256": "6d2de0c40d9e9fbe9973da3afa8a39dbffa9607667768a0e952c2d14d18beddf",
-    "originalBytes": 286528,
-    "optimizedBytes": 286528,
-    "width": 1792,
-    "height": 1008
-  },
-  "why-technology-real.webp": {
-    "sha256": "807d91785448e8057a3891aa2819073c3a282ca0f6d869aa2dc1c354f6584f7b",
-    "originalBytes": 435588,
-    "optimizedBytes": 435588,
-    "width": 1792,
-    "height": 1195
-  },
-  "why-transparent-real.webp": {
-    "sha256": "564c6d08e74cd0091e878f415c76dad332e1b6f7da538115145b93682912e698",
-    "originalBytes": 469404,
-    "optimizedBytes": 469404,
-    "width": 1792,
-    "height": 1195
   }
 }

@@ -155,7 +155,7 @@ function CargoworksLogo() {
   );
 }
 
-function CargoworksPreloader() {
+function CargoworksPreloader({ reduceMotion }: { reduceMotion?: boolean | null }) {
   return (
     <motion.div
       className="site-preloader"
@@ -163,7 +163,7 @@ function CargoworksPreloader() {
       aria-label="Loading Cargoworks"
       initial={false}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.55, ease: [0.4, 0, 0.2, 1] } }}
+      exit={{ opacity: 0, transition: { duration: reduceMotion ? 0 : 0.45, ease: [0.4, 0, 0.2, 1] } }}
     >
       <div className="site-preloader__logo" aria-hidden="true">
         <span className="site-preloader__mark">
@@ -196,7 +196,7 @@ const SERVICES = [
     icon: <IconGlobe />,
     title: "Sea Freight",
     tag: "SEA FREIGHT",
-    image: "/images/freight_sea_ship.webp",
+    image: "/images/services/sea-freight.webp",
     desc: "Global containerized shipping, FCL/LTL cargo movement, intermodal sea-to-rail corridors, and ocean port coordination across major global trade routes.",
     items: ["FCL & LTL Container Shipping", "Port-to-Port & Door-to-Door", "Vessel Chartering & Cargo Tracking"],
   },
@@ -204,7 +204,7 @@ const SERVICES = [
     icon: <IconZap />,
     title: "Air Freight",
     tag: "AIR FREIGHT",
-    image: "/images/freight_air_cargo.webp",
+    image: "/images/services/air-freight.webp",
     desc: "Time-critical international air cargo forwarding for high-value goods, pharmaceutical temperature-controlled shipments, and urgent express packages.",
     items: ["Priority & Charter Cargo Flights", "Temperature-Controlled Freight", "Airport-to-Airport Logistics"],
   },
@@ -212,7 +212,7 @@ const SERVICES = [
     icon: <IconTruck />,
     title: "Fleet & Transportation",
     tag: "LAND FREIGHT",
-    image: "/images/freight_trucking.webp",
+    image: "/images/services/fleet-transportation.webp",
     desc: "Reliable domestic road freight, dedicated fleet dispatch, full truckload (FTL), less-than-truckload (LTL), and seamless last-mile delivery network.",
     items: ["Domestic & Regional Fleet", "FTL & LTL Road Transportation", "GPS Tracked Last-Mile Delivery"],
   },
@@ -220,7 +220,7 @@ const SERVICES = [
     icon: <IconWarehouse />,
     title: "Warehousing",
     tag: "STORAGE & 3PL",
-    image: "/images/freight_warehouse.webp",
+    image: "/images/services/warehousing.webp",
     desc: "State-of-the-art climate-controlled distribution hubs, inventory management systems, order fulfillment, and long-term secure warehousing.",
     items: ["Climate-Controlled Storage", "Inventory & Order Fulfillment", "Distribution & Cross-Docking"],
   },
@@ -228,18 +228,18 @@ const SERVICES = [
     icon: <IconClipboard />,
     title: "Customs Clearance",
     tag: "CUSTOMS & PORT",
-    image: "/images/freight_customs.webp",
+    image: "/images/services/customs-clearance.webp",
     desc: "Complete documentation management, import/export clearance, duty calculation, customs brokerage, and port authority coordination.",
     items: ["Customs Documentation & Clearance", "Duty & Tariff Advisory", "Port & Terminal Coordination"],
   },
 ];
 
 const WHY_ITEMS = [
-  { icon: <IconLayers size={24} />, image: "/images/why-end-to-end-v2.webp", accent: "#cf5a39", title: "End-to-End Logistics", desc: "One partner for freight, transportation, warehousing, and customs clearance." },
-  { icon: <IconZap size={24} />, image: "/images/why-reliable-v2.webp", accent: "#e2a642", title: "Reliable & Efficient", desc: "Timely deliveries and smooth operations you can count on." },
-  { icon: <IconEye size={24} />, image: "/images/why-transparent-v2.webp", accent: "#78a9b8", title: "Transparent Services", desc: "Clear communication, pricing, and real-time shipment visibility." },
-  { icon: <IconHeart size={24} />, image: "/images/why-customer-v2.webp", accent: "#d3ba83", title: "Customer-Focused", desc: "Dedicated support from pickup to final delivery." },
-  { icon: <IconCpu size={24} />, image: "/images/why-technology-v2.webp", accent: "#758ca8", title: "Technology-Driven", desc: "Modern tools for better tracking and supply chain management." },
+  { icon: <IconLayers size={24} />, image: "/images/why-choose/end-to-end.webp", accent: "#cf5a39", title: "End-to-End Logistics", desc: "One partner for freight, transportation, warehousing, and customs clearance." },
+  { icon: <IconZap size={24} />, image: "/images/why-choose/reliable.webp", accent: "#e2a642", title: "Reliable & Efficient", desc: "Timely deliveries and smooth operations you can count on." },
+  { icon: <IconEye size={24} />, image: "/images/why-choose/transparent.webp", accent: "#78a9b8", title: "Transparent Services", desc: "Clear communication, pricing, and real-time shipment visibility." },
+  { icon: <IconHeart size={24} />, image: "/images/why-choose/customer.webp", accent: "#d3ba83", title: "Customer-Focused", desc: "Dedicated support from pickup to final delivery." },
+  { icon: <IconCpu size={24} />, image: "/images/why-choose/technology.webp", accent: "#758ca8", title: "Technology-Driven", desc: "Modern tools for better tracking and supply chain management." },
 ];
 
 const DELIVERY_STEPS = [
@@ -527,7 +527,7 @@ function SwingingContainer() {
 }
 
 function WhyFeatureGrid() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(4);
   const lead = WHY_ITEMS[activeIndex];
   const supporting = WHY_ITEMS
     .map((item, index) => ({ item, index }))
@@ -628,23 +628,51 @@ export default function Home() {
 
   useEffect(() => {
     const startedAt = performance.now();
-    let timer = 0;
+    let timer: number = 0;
+    let fallbackTimer: number = 0;
     document.documentElement.classList.add("preloader-active");
 
-    const finish = () => {
-      const remaining = reduceMotion ? 0 : Math.max(0, 2600 - (performance.now() - startedAt));
-      timer = window.setTimeout(() => {
-        document.documentElement.classList.remove("preloader-active");
-        setPreloaderVisible(false);
-      }, remaining);
+    const dismiss = () => {
+      window.clearTimeout(timer);
+      window.clearTimeout(fallbackTimer);
+      document.documentElement.classList.remove("preloader-active");
+      setPreloaderVisible(false);
     };
 
-    if (document.readyState === "complete") finish();
-    else window.addEventListener("load", finish, { once: true });
+    if (reduceMotion) {
+      dismiss();
+      return;
+    }
+
+    let isHeroReady = Boolean(typeof window !== "undefined" && (window as unknown as { __heroReady?: boolean }).__heroReady);
+
+    const tryFinish = () => {
+      const elapsed = performance.now() - startedAt;
+      const minDuration = 1200; // Time for Cargoworks brand animation
+      const remaining = Math.max(0, minDuration - elapsed);
+
+      window.clearTimeout(timer);
+      timer = window.setTimeout(dismiss, remaining);
+    };
+
+    const onHeroReady = () => {
+      isHeroReady = true;
+      tryFinish();
+    };
+
+    if (isHeroReady) {
+      tryFinish();
+    } else {
+      window.addEventListener("cargoworks:hero-ready", onHeroReady, { once: true });
+    }
+
+    // Safety fallback: ensure dismissal by 2200ms even on high network latency
+    fallbackTimer = window.setTimeout(dismiss, 2200);
 
     return () => {
-      window.removeEventListener("load", finish);
+      window.removeEventListener("cargoworks:hero-ready", onHeroReady);
       window.clearTimeout(timer);
+      window.clearTimeout(fallbackTimer);
       document.documentElement.classList.remove("preloader-active");
     };
   }, [reduceMotion]);
@@ -702,7 +730,7 @@ export default function Home() {
   return (
     <>
       <AnimatePresence>
-        {preloaderVisible && <CargoworksPreloader />}
+        {preloaderVisible && <CargoworksPreloader reduceMotion={reduceMotion} />}
       </AnimatePresence>
 
       {/* ══ NAVBAR ════════════════════════════════════════════ */}
