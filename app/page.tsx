@@ -13,6 +13,7 @@ import {
 } from "framer-motion";
 import CinematicHero from "./cinematic-hero";
 import ContactSection from "./contact-section";
+import CookieConsent from "./cookie-consent";
 import { whatsappLink } from "./contact-config";
 import { useScrollExperience } from "./use-scroll-experience";
 import "./scroll-experience.css";
@@ -759,7 +760,7 @@ export default function Home() {
                 </details>
               </li>
               <li>
-                <a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Why Choose</a>
+                <a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Why-choose</a>
               </li>
               <li>
                 <a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Industries</a>
@@ -853,7 +854,7 @@ export default function Home() {
             <div className="shipment-paths__header reveal">
               <div>
                 <div className="label-line">Built around your operation</div>
-              <h2 id="shipment-paths-title" className="section-title">Start where you are. Scale when you are ready.</h2>
+                <h2 id="shipment-paths-title" className="section-title">Start where you are. Scale when you are ready.</h2>
               </div>
               <p className="section-desc">From one urgent movement to a connected logistics program, choose the level of support your business needs today.</p>
             </div>
@@ -1076,11 +1077,19 @@ export default function Home() {
           <a href="#hero" className="footer-minimal__wordmark" onClick={(e) => smoothTo(e, "hero")}>CARGOWORKS</a>
           <div className="footer-minimal__legal">
             <span>Cargoworks Logistics. Copyright &copy; {new Date().getFullYear()}. All rights reserved.</span>
+            <button
+              type="button"
+              className="footer-cookie-btn"
+              onClick={() => window.dispatchEvent(new CustomEvent("cargoworks:open-cookie-preferences"))}
+            >
+              Cookie Preferences
+            </button>
             <a href="#hero" onClick={(e) => smoothTo(e, "hero")}>Back to top ↑</a>
           </div>
         </div>
 
       </footer>
+      <CookieConsent />
     </>
   );
 }

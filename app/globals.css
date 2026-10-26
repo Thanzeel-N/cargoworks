@@ -10175,3 +10175,131 @@ article[id] {
     background-position: 64% center !important;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   COOKIE CONSENT BANNER
+───────────────────────────────────────────────────────────── */
+.cookie-banner {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9998;
+  max-width: 440px;
+  width: calc(100vw - 3rem);
+  background: rgba(20, 28, 31, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: #fff;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.cookie-banner__header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cookie-banner__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sand, #dfd0bc);
+}
+
+.cookie-banner__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+.cookie-banner__desc {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0.35rem 0 0 0;
+}
+
+.cookie-banner__actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.cookie-banner__btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  outline: none;
+}
+
+.cookie-banner__btn--accept {
+  background: var(--rust, #cf5a39);
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+.cookie-banner__btn--accept:hover {
+  background: #b5492b;
+  transform: translateY(-1px);
+}
+
+.cookie-banner__btn--essential {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.cookie-banner__btn--essential:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .cookie-banner {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    width: auto;
+    padding: 1.1rem;
+  }
+  .cookie-banner__actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .cookie-banner__btn {
+    width: 100%;
+  }
+}
+
+.footer-cookie-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.footer-cookie-btn:hover {
+  opacity: 1;
+}
+
+
