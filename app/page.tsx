@@ -740,6 +740,9 @@ export default function Home() {
 
           <nav aria-label="Primary">
             <ul className="navbar__links">
+              <li>
+                <a href="#about" onClick={(e) => smoothTo(e, "about")}>About</a>
+              </li>
               <li className="nav-dropdown">
                 <details ref={desktopServicesRef}>
                   <summary>Services <svg className="services-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></summary>
@@ -755,15 +758,12 @@ export default function Home() {
                   </div>
                 </details>
               </li>
-              {[
-                { href: "industries", label: "Industries" },
-                { href: "why-us", label: "Why Us" },
-                { href: "about", label: "About" },
-              ].map(({ href, label }) => (
-                <li key={href}>
-                  <a href={`#${href}`} onClick={(e) => smoothTo(e, href)}>{label}</a>
-                </li>
-              ))}
+              <li>
+                <a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Why Choose</a>
+              </li>
+              <li>
+                <a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Industries</a>
+              </li>
             </ul>
           </nav>
 
@@ -788,6 +788,7 @@ export default function Home() {
 
       {/* ══ MOBILE MENU ═══════════════════════════════════════ */}
       <nav id="mobile-navigation" className={`mobile-menu${mobileOpen ? " open" : ""}`} aria-label="Mobile" inert={!mobileOpen} data-lenis-prevent>
+        <a href="#about" onClick={(e) => smoothTo(e, "about")}>About</a>
         <div className="mobile-services">
           <button type="button" className="mobile-services__toggle"
             aria-expanded={mobileServicesOpen} aria-controls="mobile-services-list"
@@ -803,14 +804,9 @@ export default function Home() {
             ))}
           </div>
         </div>
-        {[
-          { href: "industries", label: "Industries" },
-          { href: "why-us", label: "Why Us" },
-          { href: "about", label: "About" },
-          { href: "contact", label: "Contact" },
-        ].map(({ href, label }) => (
-          <a key={href} href={`#${href}`} onClick={(e) => smoothTo(e, href)}>{label}</a>
-        ))}
+        <a href="#why-us" onClick={(e) => smoothTo(e, "why-us")}>Why Choose</a>
+        <a href="#industries" onClick={(e) => smoothTo(e, "industries")}>Industries</a>
+        <a href="#contact" onClick={(e) => smoothTo(e, "contact")}>Contact</a>
         <a href="#contact" className="btn btn-primary btn-lg"
           onClick={(e) => smoothTo(e, "contact")}>
           Get a Quote <IconArrowRight />
